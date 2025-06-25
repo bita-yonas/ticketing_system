@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block title %}Search Results - {{ query }}{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('home') }}">Home</a>
+</li>
+<li class="breadcrumb-item active">Search Results</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="mb-4">
+        <h1 class="h3">Search Results for "{{ query }}"</h1>
+        <p class="text-muted">
+            Found {{ results.tickets|length + results.services|length + results.help_articles|length }} results
+        </p>
+    </div>
+
+    {% if results.help_articles %}
+    <section class="mb-5">
+        <h2 class="h4 mb-4">Knowledge Base Articles</h2>
+        <div class="row g-4">
+            {% for article in results.help_articles %}
+            <div class="col-md-6">
+                <a href="{{ url_for('article', slug=article.slug) }}" class="text-decoration-none">
+                    <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="category-icon me-3 {{ article.icon_bg }}">
+                                <i class="bi bi-{{ article.icon }} {{ article.icon_color }}"></i>
+                            </div>
+                            <div>
+                                <h3 class="h5 mb-1 text-body">{{ article.title }}</h3>
+                                <div class="text-muted small mb-2">
+                                    <i class="bi bi-folder me-1"></i>{{ article.category }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-text text-muted small">
+                            {{ article.description }}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if results.services %}
+    <section class="mb-5">
+        <h2 class="h4 mb-4">Services</h2>
+        <div class="row g-4">
+            {% for service in results.services %}
+            <div class="col-md-6">
+                <a href="{{ url_for('new_ticket', service=service.id) }}" class="text-decoration-none">
+                    <div class="service-card">
+                        <div class="service-icon bg-{{ service.color }}-subtle">
+                            <i class="bi bi-{{ service.icon }} text-{{ service.color }}"></i>
+                        </div>
+                        <h4>{{ service.title }}</h4>
+                        <p>{{ service.description }}</p>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if results.tickets %}
+    <section>
+        <h2 class="h4 mb-4">Tickets</h2>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        {% if session.is_admin %}
+                        <th>User</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in results.tickets %}
+                    <tr>
+                        <td>{{ ticket.id }}</td>
+                        <td>
+                            <a href="{{ url_for('ticket_detail', ticket_id=ticket.id) }}">
+                                {{ ticket.title }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="status-badge {{ ticket.status }}">
+                                {{ ticket.status.replace('-', ' ').title() }}
+                            </span>
+                        </td>
+                        <td>{{ ticket.created_at }}</td>
+                        {% if session.is_admin %}
+                        <td>{{ ticket.username }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if not results.tickets and not results.services and not results.help_articles %}
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-search display-1 text-muted"></i>
+        </div>
+        <h2 class="h4">No results found</h2>
+        <p class="text-muted">Try different keywords or check your spelling</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Timezone conversion script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Convert all timestamps to local timezone
+  document.querySelectorAll('.timestamp').forEach(function(element) {
+    const utcTimestamp = element.dataset.timestamp;
+    const localDate = new Date(utcTimestamp);
+    
+    // Format the date in local timezone
+    const options = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    };
+    
+    element.textContent = localDate.toLocaleString(undefined, options);
+  });
+});
+</script>
+{% endblock %} 

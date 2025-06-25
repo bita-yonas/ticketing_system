@@ -1,0 +1,425 @@
+{% extends 'base.html' %}
+{% block title %}New Ticket{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('list_tickets') }}">Tickets</a>
+</li>
+{% if service %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('services') }}">Services</a>
+</li>
+<li class="breadcrumb-item active">New {{ service|replace('_', ' ')|title }} Ticket</li>
+{% else %}
+<li class="breadcrumb-item active">New Ticket</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="ticket-container">
+  <div class="ticket-header">
+    {% if service %}
+    <div>
+      <h2>Create New {{ service|replace('_', ' ')|title }} Ticket</h2>
+      {% if service == 'academic' %}
+      <p class="text-muted">Request academic services such as transcripts, enrollment verification, or grade appeals</p>
+      {% elif service == 'it_support' %}
+      <p class="text-muted">Get help with technical issues, software, or account access</p>
+      {% elif service == 'facilities' %}
+      <p class="text-muted">Report maintenance issues or request facility services</p>
+      {% elif service == 'admin_services' %}
+      <p class="text-muted">Request administrative services such as ID cards or parking permits</p>
+      {% endif %}
+    </div>
+    {% else %}
+    <h2>Create New Ticket</h2>
+    {% endif %}
+  </div>
+
+  <form method="post" class="ticket-form">
+    {% if service %}
+    <!-- Service-specific ticket form -->
+    <input type="hidden" name="service_type" value="{{ service }}">
+
+    <!-- Common Fields -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label">First Name</label>
+        <input 
+          type="text"
+          class="form-control" 
+          name="first_name" 
+          placeholder="Enter your first name"
+          required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Last Name</label>
+        <input 
+          type="text"
+          class="form-control" 
+          name="last_name" 
+          placeholder="Enter your last name"
+          required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input 
+          type="email"
+          class="form-control" 
+          name="email" 
+          placeholder="Enter your email address"
+          required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Phone Number</label>
+        <input 
+          type="tel"
+          class="form-control" 
+          name="phone" 
+          placeholder="Enter 10-digit phone number"
+          pattern="[0-9]{10}"
+          title="Please enter a 10-digit phone number without dashes"
+          required>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Service-specific Fields -->
+    {% if service == 'academic' %}
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label">Document Type</label>
+        <select class="form-select" name="document_type" required>
+          <option value="" disabled selected>Select document type</option>
+          <option value="transcript">Official Transcript</option>
+          <option value="enrollment">Enrollment Verification</option>
+          <option value="grade_appeal">Grade Appeal</option>
+          <option value="degree_audit">Degree Audit</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Delivery Method</label>
+        <select class="form-select" name="delivery_method" required>
+          <option value="" disabled selected>Select delivery method</option>
+          <option value="email">Email</option>
+          <option value="mail">Physical Mail</option>
+          <option value="pickup">In-person Pickup</option>
+        </select>
+      </div>
+    </div>
+
+    {% elif service == 'it_support' %}
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label">Device Type</label>
+        <select class="form-select" name="device_type" required>
+          <option value="" disabled selected>Select device type</option>
+          <option value="laptop">Laptop</option>
+          <option value="desktop">Desktop</option>
+          <option value="tablet">Tablet</option>
+          <option value="phone">Phone</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Operating System</label>
+        <select class="form-select" name="operating_system" required>
+          <option value="" disabled selected>Select operating system</option>
+          <option value="windows">Windows</option>
+          <option value="mac">macOS</option>
+          <option value="linux">Linux</option>
+          <option value="ios">iOS</option>
+          <option value="android">Android</option>
+        </select>
+      </div>
+    </div>
+
+    {% elif service == 'facilities' %}
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label">Building</label>
+        <select class="form-select" name="location" required>
+          <option value="" disabled selected>Select building</option>
+          <option value="Aquinas Hall">Aquinas Hall</option>
+          <option value="Borelli Hall">Borelli Hall</option>
+          <option value="Costello Hall">Costello Hall</option>
+          <option value="Gymnasium">Gymnasium</option>
+          <option value="Library">Library</option>
+          <option value="Student Center">Student Center</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Room Number</label>
+        <input 
+          type="text"
+          class="form-control" 
+          name="room" 
+          placeholder="Enter room number"
+          required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Preferred Date</label>
+        <input 
+          type="date"
+          class="form-control" 
+          name="preferred_date" 
+          min="{{ today }}"
+          required>
+      </div>
+    </div>
+
+    {% elif service == 'admin_services' %}
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label">ID Type</label>
+        <select class="form-select" name="id_type" required>
+          <option value="" disabled selected>Select ID type</option>
+          <option value="student">Student ID</option>
+          <option value="faculty">Faculty ID</option>
+          <option value="staff">Staff ID</option>
+          <option value="parking">Parking Permit</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Urgency</label>
+        <select class="form-select" name="urgency" required>
+          <option value="" disabled selected>Select urgency level</option>
+          <option value="low">Low - Within 5 business days</option>
+          <option value="medium">Medium - Within 2 business days</option>
+          <option value="high">High - Next business day</option>
+        </select>
+      </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- General ticket form -->
+    <!-- User Type Dropdown -->
+    <div class="mb-4">
+      <label class="form-label">User Type</label>
+      <select class="form-select" name="user_type" required>
+        <option value="" disabled selected>Select User Type</option>
+        <option value="student">Student</option>
+        <option value="faculty">Faculty</option>
+        <option value="staff">Staff</option>
+      </select>
+    </div>
+
+    <!-- Group Dropdown -->
+    <div class="mb-4">
+      <label class="form-label">Group</label>
+      <select class="form-select" name="group_id" required>
+        <option value="" disabled selected>Select Group</option>
+        <option value="1">Academic Services</option>
+        <option value="2">Aramark - Custodial</option>
+        <option value="3">Banner</option>
+        <option value="4">Degree Works</option>
+        <option value="5">EVENT MANAGER</option>
+        <option value="6">Facilities</option>
+        <option value="7">HR</option>
+        <option value="8">IT Helpdesk</option>
+        <option value="9">Moodlerooms & Canvas</option>
+        <option value="10">Single Sign On</option>
+      </select>
+    </div>
+
+    <!-- Category Dropdown -->
+    <div class="mb-4">
+      <label class="form-label">Category</label>
+      <select class="form-select" name="category_id" required>
+        <option value="" disabled selected>Select Category</option>
+        <option value="1">AV Request</option>
+        <option value="2">Hardware</option>
+        <option value="3">Software</option>
+        <option value="4">VPN</option>
+        <option value="5">Telecommunications</option>
+        <option value="6">Wireless Network</option>
+        <option value="7">Carpeting/Flooring</option>
+        <option value="8">Delivery/Pickup</option>
+        <option value="9">Electrical</option>
+        <option value="10">Facility Safety</option>
+        <option value="11">General Repair</option>
+        <option value="12">Heating/Cooling</option>
+        <option value="13">Janitorial</option>
+        <option value="14">Life Safety/Fire Alarm</option>
+        <option value="15">Lock/Door Issue</option>
+        <option value="16">Painting/Patching</option>
+        <option value="17">Plumbing</option>
+        <option value="18">PE Equipment/Fountains/Wipes/Hand Sanitizer</option>
+        <option value="19">Resident Hall Furniture</option>
+        <option value="20">Banner</option>
+        <option value="21">Degree Works</option>
+        <option value="22">Moodlerooms</option>
+        <option value="23">SSO</option>
+        <option value="24">Other</option>
+      </select>
+    </div>
+
+    <!-- Requester Email -->
+    <div class="mb-4">
+      <label class="form-label">Requester Email</label>
+      <input 
+        type="email"
+        class="form-control" 
+        name="requester_email" 
+        placeholder="Enter your email address"
+        required>
+    </div>
+
+    <!-- First Name -->
+    <div class="mb-4">
+      <label class="form-label">First Name</label>
+      <input 
+        type="text"
+        class="form-control" 
+        name="first_name" 
+        placeholder="Enter your first name"
+        required>
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-4">
+      <label class="form-label">Last Name</label>
+      <input 
+        type="text"
+        class="form-control" 
+        name="last_name" 
+        placeholder="Enter your last name"
+        required>
+    </div>
+
+    <!-- Telephone Number -->
+    <div class="mb-4">
+      <label class="form-label">Telephone Number (no dashes)</label>
+      <input 
+        type="tel"
+        class="form-control" 
+        name="phone" 
+        placeholder="Enter your phone number"
+        pattern="[0-9]{10}"
+        title="Please enter a 10-digit phone number without dashes"
+        required>
+    </div>
+
+    <!-- Building Dropdown -->
+    <div class="mb-4">
+      <label class="form-label">Building</label>
+      <select class="form-select" name="building" required>
+        <option value="" disabled selected>Select Building</option>
+        <option value="Aquinas Hall">Aquinas Hall</option>
+        <option value="Borelli Hall">Borelli Hall</option>
+        <option value="Costello Hall">Costello Hall</option>
+        <option value="Fitzpatrick Village 100">Fitzpatrick Village 100</option>
+        <option value="Fitzpatrick Village 200">Fitzpatrick Village 200</option>
+        <option value="Fitzpatrick Village 300">Fitzpatrick Village 300</option>
+        <option value="Fitzpatrick Village 400">Fitzpatrick Village 400</option>
+        <option value="Fitzpatrick Village 500">Fitzpatrick Village 500</option>
+        <option value="Gymnasium">Gymnasium</option>
+        <option value="Krause Fitness Center">Krause Fitness Center</option>
+        <option value="Lougheed Library">Lougheed Library</option>
+        <option value="Maguire Hall">Maguire Hall</option>
+        <option value="Maintenance Building">Maintenance Building</option>
+        <option value="Marian Gardens">Marian Gardens</option>
+        <option value="McNelis Commons">McNelis Commons</option>
+        <option value="McNelis Commons 1">McNelis Commons 1</option>
+        <option value="McNelis Commons 2">McNelis Commons 2</option>
+        <option value="McNelis Commons 3">McNelis Commons 3</option>
+        <option value="McNelis Commons 4">McNelis Commons 4</option>
+        <option value="McNelis Commons Main Cafeteria">McNelis Commons Main Cafeteria</option>
+        <option value="McNelis Laundry Center">McNelis Laundry Center</option>
+        <option value="Naughton Hall">Naughton Hall</option>
+        <option value="Parking Lot(s)">Parking Lot(s)</option>
+        <option value="Riley Family Tennis Courts">Riley Family Tennis Courts</option>
+        <option value="Romano Center">Romano Center</option>
+        <option value="Spartan Field">Spartan Field</option>
+        <option value="Spellman Hall">Spellman Hall</option>
+        <option value="Sullivan Theatre">Sullivan Theatre</option>
+      </select>
+    </div>
+
+    <!-- Room -->
+    <div class="mb-4">
+      <label class="form-label">Room</label>
+      <input 
+        type="text"
+        class="form-control" 
+        name="room" 
+        placeholder="Enter room number or location"
+        required>
+    </div>
+    {% endif %}
+
+    <hr class="my-4">
+
+    <!-- Title and Description (common for both) -->
+    <div class="mb-4">
+      <label class="form-label">Title</label>
+      <input 
+        class="form-control" 
+        name="title" 
+        placeholder="Brief description of the issue" 
+        required>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label">Description</label>
+      <textarea 
+        class="form-control" 
+        name="description" 
+        placeholder="Detailed explanation of the issue..." 
+        rows="6" 
+        required></textarea>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-send me-2"></i>Submit Ticket
+      </button>
+      <a href="{{ url_for('list_tickets') if not service else url_for('services') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-x-lg me-2"></i>Cancel
+      </a>
+    </div>
+  </form>
+</div>
+
+<style>
+.form-select {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    font-size: 1rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-select:focus {
+    border-color: #4b6cb7;
+    box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.25);
+}
+
+.form-select option {
+    padding: 10px;
+}
+
+.form-control {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    font-size: 1rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #4b6cb7;
+    box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.25);
+}
+</style>
+{% endblock %}

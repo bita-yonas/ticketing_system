@@ -1,0 +1,977 @@
+:root {
+  --banner-width: 77%;
+}
+
+/* 1. Site-wide font + gradient background */
+html, body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #4b6cb7 0%, #FFFFFF 100%);
+  /* ensure it covers the viewport */
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* 2. (Optional) Only on homepage */
+.homepage {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* 3. Hero banner full-width and centered */
+.hero {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: -1.5rem; /* cancel out container padding */
+  background: url('../images/Banner1.png') center center/cover no-repeat;
+  background-size: var(--banner-width) auto;
+  color: white;
+}
+
+/* 3b. Constrain & center the hero content */
+.hero .hero-inner {
+  width: var(--banner-width);
+  margin: 0 auto;
+  padding: 0 1rem;        /* optional side padding on very small screens */
+}
+
+/* 4. Navbar wrapper: full-width transparent container */
+.navbar-custom {
+  width: 100%;
+  background: transparent;
+  padding: 0;
+}
+
+/* 4b. Inner navbar: colored, sized, and centered like your banner */
+.navbar-custom .navbar-inner {
+  width: var(--banner-width);
+  margin: 0 auto;
+  background-color: #1A237E !important;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 5. Toggler, brand, buttons, dropdown toggles in white */
+.navbar-custom .navbar-inner .btn-toggle i.bi-list,
+.navbar-custom .navbar-inner .navbar-brand,
+.navbar-custom .navbar-inner .btn-outline-light,
+.navbar-custom .navbar-inner .dropdown-toggle::before {
+  color: #fff !important;
+}
+
+/* 6. Clean up toggle button */
+.navbar-custom .navbar-inner .btn-toggle {
+  background: none !important;
+  border: none !important;
+}
+
+/* 7. Constrain & center the search box */
+.search-box {
+  width: 100%;
+  max-width: 600px;   /* adjust to taste */
+  margin: 0 auto;
+}
+
+/* 8. Make search input taller & text larger */
+.search-box .form-control {
+  padding: 1rem;
+  font-size: 1.25rem;
+}
+
+/* 9. Feature-card hover "lift & glow" */
+.card.shadow-sm {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+.card.shadow-sm:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Disable lift & glow on cards with no-hover */
+.card.shadow-sm.no-hover { transition: none !important; }
+.card.shadow-sm.no-hover:hover { transform: none !important; box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important; }
+
+/* 10. Side Menu Styling */
+.offcanvas {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border: none;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.offcanvas-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.offcanvas-title {
+  font-weight: 600;
+  color: #1A237E;
+}
+
+.offcanvas-body {
+  padding: 0;
+}
+
+/* Side menu links styling */
+.offcanvas-body .nav-link {
+  padding: 1rem 1.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.offcanvas-body .nav-link:hover {
+  background: rgba(75, 108, 183, 0.05);
+  color: #4b6cb7;
+  border-left: 3px solid #4b6cb7;
+}
+
+/* Active link state */
+.offcanvas-body .nav-link.active {
+  background: rgba(75, 108, 183, 0.1);
+  color: #4b6cb7;
+  border-left: 3px solid #4b6cb7;
+}
+
+/* Divider between menu sections if needed */
+.offcanvas-body .nav-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.05);
+  margin: 0.5rem 0;
+}
+
+/* Close button styling */
+.btn-close {
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
+
+/* If menu has icons */
+.offcanvas-body .nav-link i {
+  margin-right: 0.75rem;
+  width: 20px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* 11. Login Page Styling */
+.login-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.login-container h2 {
+  color: #1A237E;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-container .form-control {
+  border: 2px solid #e1e5ee;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.login-container .form-control:focus {
+  border-color: #4b6cb7;
+  box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.1);
+}
+
+.login-container .btn-primary {
+  background-color: #1A237E;
+  border: none;
+  padding: 0.8rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.login-container .btn-primary:hover {
+  background-color: #283593;
+  transform: translateY(-1px);
+}
+
+.login-container .btn-outline-danger,
+.login-container .btn-outline-secondary {
+  border-width: 2px;
+  padding: 0.8rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.login-container .btn-outline-danger:hover,
+.login-container .btn-outline-secondary:hover {
+  transform: translateY(-1px);
+}
+
+.login-container .alert {
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.login-divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.login-divider::before {
+  content: "";
+  width: 100%;
+  height: 1px;
+  background-color: #e1e5ee;
+}
+
+.login-divider span {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.login-container .input-group {
+  align-items: stretch;
+}
+
+.login-container .input-group-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background-color: white;
+}
+
+.login-container .input-group > * {
+  height: 45px;
+  line-height: 45px;
+}
+
+.login-container .form-control {
+  padding: 0.5rem 1rem;
+  line-height: 1.5;
+}
+
+.login-container .input-group-text i {
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Password visibility checkbox */
+.login-container .form-check {
+  padding-left: 1.8rem;
+}
+
+.login-container .form-check-input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-left: -1.8rem;
+  border-color: #e1e5ee;
+  cursor: pointer;
+}
+
+.login-container .form-check-input:checked {
+  background-color: #4b6cb7;
+  border-color: #4b6cb7;
+}
+
+.login-container .form-check-input:focus {
+  border-color: #4b6cb7;
+  box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.25);
+}
+
+.login-container .form-check-label {
+  color: #6c757d;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* 12. Ticket Pages Styling */
+.ticket-container {
+  width: var(--banner-width);
+  margin: 0 auto 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+}
+
+.ticket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.ticket-header h2 {
+  color: #1A237E;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ticket-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.ticket-table thead {
+  background-color: #f8f9fa;
+}
+
+.ticket-table th {
+  color: #1A237E !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  padding: 1rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.ticket-table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.ticket-table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.ticket-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.ticket-table .ticket-link {
+  color: #1A237E;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.ticket-table .ticket-link:hover {
+  color: #283593;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.status-badge.open {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-badge.in-progress {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.status-badge.closed {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+/* New Ticket Form */
+.ticket-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ticket-form .form-control {
+  border: 2px solid #e1e5ee;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.ticket-form .form-control:focus {
+  border-color: #4b6cb7;
+  box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.1);
+}
+
+.ticket-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+/* Ticket Detail Page */
+.ticket-detail {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ticket-detail h2 {
+  color: #1A237E;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.ticket-detail .description {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  white-space: pre-wrap;
+}
+
+.ticket-meta {
+  display: flex;
+  gap: 2rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.ticket-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ticket-meta-item i {
+  color: #6c757d;
+}
+
+/* Status Select Styling */
+.status-select {
+  background-color: white;
+  border: 2px solid #e1e5ee;
+  border-radius: 8px;
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-select:focus {
+  border-color: #4b6cb7;
+  box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.1);
+}
+
+/* 13. Auth Button Styling */
+.navbar-custom .btn-outline-light {
+  border-width: 2px;
+  padding: 0.4rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.navbar-custom .btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Override Bootstrap's default hover state */
+.navbar-custom .btn-outline-light:hover,
+.navbar-custom .btn-outline-light:active,
+.navbar-custom .btn-outline-light:focus {
+  color: #fff !important;
+}
+
+/* Password toggle button */
+.password-toggle {
+  background: none;
+  border: none;
+  color: #6c757d;
+  padding: 0 1rem;
+  transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+  color: #4b6cb7;
+}
+
+.password-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb-nav {
+  width: var(--banner-width);
+  margin: 0 auto 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.breadcrumb {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.breadcrumb-item a {
+  color: #1A237E;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+  color: #283593;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  padding-right: 0.5rem;
+  color: #6c757d;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.breadcrumb-item.active {
+  color: #4b6cb7;
+  font-weight: 500;
+}
+
+/* Profile and Notification Dropdowns */
+.navbar-custom .dropdown-menu {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  min-width: 280px;
+  margin-top: 0.5rem;
+}
+
+/* Profile Header */
+.navbar-custom .dropdown-menu .profile-header {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.navbar-custom .dropdown-menu .profile-header strong {
+  color: #1A237E;
+  font-size: 1rem;
+  display: block;
+}
+
+.navbar-custom .dropdown-menu .profile-header small {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+/* Dropdown Items */
+.navbar-custom .dropdown-menu .dropdown-item {
+  padding: 0.75rem 1rem;
+  color: #2c3e50;
+  border-radius: 8px;
+  margin: 0.125rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.navbar-custom .dropdown-menu .dropdown-item:hover {
+  background: rgba(75, 108, 183, 0.05);
+  color: #4b6cb7;
+}
+
+.navbar-custom .dropdown-menu .dropdown-item i {
+  font-size: 1.1rem;
+  color: #6c757d;
+  transition: color 0.2s ease;
+}
+
+.navbar-custom .dropdown-menu .dropdown-item:hover i {
+  color: #4b6cb7;
+}
+
+/* Notification Badge */
+.navbar-custom .notification-badge {
+  background: #ef5350;
+  border: 2px solid #1A237E;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Notification Items */
+.navbar-custom .notification-item {
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.navbar-custom .notification-item:hover {
+  border-left-color: #4b6cb7;
+}
+
+.navbar-custom .notification-item.unread {
+  background: rgba(75, 108, 183, 0.05);
+  border-left-color: #ef5350;
+}
+
+.navbar-custom .notification-item .notification-time {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+/* Dropdown Divider */
+.navbar-custom .dropdown-menu .dropdown-divider {
+  margin: 0.5rem 0;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Admin Console Styling */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h3 {
+  color: #1A237E;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.admin-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.admin-table thead {
+  background-color: #f8f9fa;
+}
+
+.admin-table th {
+  color: #1A237E !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  padding: 1rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.admin-table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+/* Stats Cards */
+.stats-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+}
+
+.stats-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-icon i {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.stats-info h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: #1A237E;
+}
+
+.stats-info p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Status Badges for Admin/User */
+.status-badge.admin {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.user {
+  background-color: #f5f5f5;
+  color: #616161;
+}
+
+/* Action Buttons */
+.btn-sm i {
+  font-size: 1rem;
+}
+
+.table-responsive {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Action Cards Styling */
+.action-card {
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.action-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.action-card .btn {
+  border-radius: 50px;
+  padding: 8px 24px;
+  transition: all 0.2s ease;
+}
+
+/* Remove blue hover on action-card buttons */
+.action-card:hover .btn {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+.action-card .btn i {
+  transition: transform 0.2s ease;
+}
+
+/* Subtle background colors for icons */
+.bg-primary-subtle {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.bg-danger-subtle {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.bg-warning-subtle {
+  background-color: rgba(255, 193, 7, 0.1);
+}
+
+/* Service Catalog Styling */
+.service-category .category-title {
+  color: #1A237E;
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.service-category .category-title i {
+  font-size: 1.75rem;
+}
+
+.service-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  height: 100%;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.service-card .service-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.service-card .service-icon i {
+  font-size: 1.75rem;
+}
+
+.service-card h4 {
+  color: #2c3e50;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.service-card p {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* Additional subtle background colors for service icons */
+.bg-success-subtle {
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.bg-info-subtle {
+  background-color: rgba(13, 202, 240, 0.1);
+}
+
+.service-icon i.bi-wifi { color: #198754; }
+.service-icon i.bi-download { color: #198754; }
+.service-icon i.bi-person-gear { color: #198754; }
+.service-icon i.bi-calendar-check { color: #0dcaf0; }
+.service-icon i.bi-tools { color: #0dcaf0; }
+.service-icon i.bi-calendar-event { color: #0dcaf0; }
+.service-icon i.bi-person-badge { color: #ffc107; }
+.service-icon i.bi-p-circle { color: #ffc107; }
+.service-icon i.bi-file-earmark-text { color: #ffc107; }
+
+/* Search Styling */
+.search-form {
+  min-width: 300px;
+}
+
+.search-form .input-group {
+  border-radius: 50px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-form .form-control {
+  border: 2px solid #e1e5ee;
+  border-right: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+}
+
+.search-form .form-control:focus {
+  box-shadow: none;
+  border-color: #4b6cb7;
+}
+
+.search-form .btn {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  background: #4b6cb7;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.search-form .btn:hover {
+  background: #3b5998;
+  color: white;
+}
+
+.search-form .btn:focus {
+  background: #3b5998;
+  color: white;
+  box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.25);
+}
+
+/* Service Type Badge */
+.badge.bg-secondary {
+  background-color: #e9ecef !important;
+  color: #495057;
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+}
+
+/* Outline button hover in action cards */
+.action-card .btn-outline-info:hover, .action-card .btn-outline-info:focus {
+  background-color: var(--bs-info) !important;
+  color: #fff !important;
+}
+.action-card .btn-outline-success:hover, .action-card .btn-outline-success:focus {
+  background-color: var(--bs-success) !important;
+  color: #fff !important;
+}
+.action-card .btn-outline-warning:hover, .action-card .btn-outline-warning:focus {
+  background-color: var(--bs-warning) !important;
+  color: #212529 !important;
+}
+
+/* Home page action card button hover colors */
+.action-card.hover-bg-primary:hover .btn-light,
+.action-card.hover-bg-primary:hover .btn-light:hover,
+.action-card.hover-bg-primary:hover .btn-light:focus {
+  background-color: var(--bs-primary) !important;
+  color: #fff !important;
+}
+.action-card.hover-bg-danger:hover .btn-light,
+.action-card.hover-bg-danger:hover .btn-light:hover,
+.action-card.hover-bg-danger:hover .btn-light:focus {
+  background-color: var(--bs-danger) !important;
+  color: #fff !important;
+}
+.action-card.hover-bg-warning:hover .btn-light,
+.action-card.hover-bg-warning:hover .btn-light:hover,
+.action-card.hover-bg-warning:hover .btn-light:focus {
+  background-color: var(--bs-warning) !important;
+  color: #212529 !important;
+}

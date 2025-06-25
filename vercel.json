@@ -1,0 +1,53 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "vercel_app.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.9"
+      }
+    },
+    {
+      "src": "static/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "templates/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "vercel_app.py"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": ".",
+    "FLASK_APP": "vercel_app.py",
+    "FLASK_ENV": "production",
+    "FLASK_DEBUG": "0",
+    "FLASK_SECRET_KEY": "@flask_secret_key",
+    "CLERK_PUBLISHABLE_KEY": "@clerk_publishable_key",
+    "CLERK_SECRET_KEY": "@clerk_secret_key",
+    "RESEND_API_KEY": "@resend_api_key",
+    "GMAIL_APP_PASSWORD": "@gmail_app_password",
+    "FIREBASE_API_KEY": "@firebase_api_key",
+    "FIREBASE_AUTH_DOMAIN": "@firebase_auth_domain",
+    "FIREBASE_PROJECT_ID": "@firebase_project_id",
+    "FIREBASE_STORAGE_BUCKET": "@firebase_storage_bucket",
+    "FIREBASE_MESSAGING_SENDER_ID": "@firebase_messaging_sender_id",
+    "FIREBASE_APP_ID": "@firebase_app_id",
+    "FIREBASE_PRIVATE_KEY_ID": "@firebase_private_key_id",
+    "FIREBASE_PRIVATE_KEY": "@firebase_private_key",
+    "FIREBASE_CLIENT_EMAIL": "@firebase_client_email",
+    "FIREBASE_CLIENT_ID": "@firebase_client_id",
+    "FIREBASE_CLIENT_CERT_URL": "@firebase_client_cert_url"
+  }
+}

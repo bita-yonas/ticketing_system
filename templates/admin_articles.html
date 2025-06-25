@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Manage Articles{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{{ url_for('admin_console') }}">Admin Console</a></li>
+<li class="breadcrumb-item active">Manage Articles</li>
+{% endblock %}
+
+{% block content %}
+<style>
+.card.shadow-sm.no-hover {
+  transition: none !important;
+  cursor: default !important;
+}
+.card.shadow-sm.no-hover:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+</style>
+<div class="container py-4">
+  <div class="card shadow-sm no-hover">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h1 class="h2 mb-0">
+        {% if user_role == 'admin' %}
+          Manage Articles
+        {% elif user_role == 'it_admin' %}
+          Manage IT Support Articles
+        {% elif user_role == 'academic_admin' %}
+          Manage Academic Services Articles
+        {% elif user_role == 'facilities_admin' %}
+          Manage Facilities & Events Articles
+        {% elif user_role == 'administrative_admin' %}
+          Manage Administrative Services Articles
+        {% endif %}
+      </h1>
+      <a href="{{ url_for('new_article') }}" class="btn btn-success">
+        <i class="bi bi-plus-circle me-2"></i>New Article
+      </a>
+    </div>
+    {% if user_role != 'admin' %}
+    <div class="card-body border-bottom">
+      <div class="alert alert-info mb-0">
+        <i class="bi bi-info-circle me-2"></i>
+        You have access to manage knowledge base articles for your department. Any articles you create or edit will automatically be assigned to your department's category.
+      </div>
+    </div>
+    {% endif %}
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Slug</th>
+              <th>Category</th>
+              <th>Published</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for art in articles %}
+            <tr>
+              <td>{{ art.id }}</td>
+              <td>{{ art.title }}</td>
+              <td><code>{{ art.slug }}</code></td>
+              <td><span class="badge bg-light text-dark">{{ art.category }}</span></td>
+              <td>
+                {% if art.published %}<span class="badge bg-primary">Yes</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}
+              </td>
+              <td>{{ art.created_at }}</td>
+              <td>{{ art.updated_at }}</td>
+              <td class="text-end">
+                <div class="btn-group" role="group">
+                  <a href="{{ url_for('article', slug=art.slug) }}" class="btn btn-sm btn-outline-info" title="View Article" target="_blank"><i class="bi bi-eye"></i></a>
+                  <a href="{{ url_for('edit_article', article_id=art.id) }}" class="btn btn-sm btn-outline-primary" title="Edit Article"><i class="bi bi-pencil"></i></a>
+                  <form action="{{ url_for('delete_article_admin', article_id=art.id) }}" method="post" onsubmit="return confirm('Delete this article?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Article"><i class="bi bi-trash"></i></button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

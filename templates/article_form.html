@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}{% if article %}Edit{% else %}New{% endif %} Article{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{{ url_for('admin_console') }}">Admin Console</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('admin_articles') }}">Manage Articles</a></li>
+<li class="breadcrumb-item active">{% if article %}Edit{% else %}New{% endif %} Article</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card shadow-sm">
+                <div class="card-body">
+      <h1 class="h2 mb-4">{% if article %}Edit{% else %}New{% endif %} Article</h1>
+      <form method="post">
+        <div class="row g-3">
+          <div class="col-md-6">
+                                <label for="title" class="form-label">Title</label>
+            <input type="text" id="title" name="title" class="form-control" required value="{{ article.title if article else '' }}">
+                                </div>
+          <div class="col-md-6">
+            <label for="slug" class="form-label">Slug</label>
+            <input type="text" id="slug" name="slug" class="form-control" required placeholder="e.g. campus-wifi-setup" value="{{ article.slug if article else '' }}">
+            <div class="form-text">Enter a URL-friendly identifier: lowercase letters, numbers, and hyphens only.</div>
+                            </div>
+          <div class="col-md-6">
+                                <label for="category" class="form-label">Category</label>
+            {% if user_role != 'admin' %}
+                {% if user_role == 'it_admin' %}
+                    <input type="hidden" name="category" value="IT Support">
+                    <input type="text" class="form-select" value="IT Support" readonly>
+                {% elif user_role == 'academic_admin' %}
+                    <input type="hidden" name="category" value="Academic Services">
+                    <input type="text" class="form-select" value="Academic Services" readonly>
+                {% elif user_role == 'facilities_admin' %}
+                    <input type="hidden" name="category" value="Facilities & Events">
+                    <input type="text" class="form-select" value="Facilities & Events" readonly>
+                {% elif user_role == 'administrative_admin' %}
+                    <input type="hidden" name="category" value="Administrative Services">
+                    <input type="text" class="form-select" value="Administrative Services" readonly>
+                {% endif %}
+                <div class="form-text">As a department administrator, you can only create articles in your department's category.</div>
+            {% else %}
+                <select id="category" name="category" class="form-select" required>
+                    <option value="">Select category</option>
+                    <option value="IT Support" {% if article and article.category=='IT Support' %}selected{% endif %}>IT Support</option>
+                    <option value="Academic Services" {% if article and article.category=='Academic Services' %}selected{% endif %}>Academic Services</option>
+                    <option value="Facilities & Events" {% if article and article.category=='Facilities & Events' %}selected{% endif %}>Facilities & Events</option>
+                    <option value="Administrative Services" {% if article and article.category=='Administrative Services' %}selected{% endif %}>Administrative Services</option>
+                </select>
+            {% endif %}
+                                </div>
+          <div class="col-md-6 d-flex align-items-center">
+            <div class="form-check mt-4">
+              <input class="form-check-input" type="checkbox" id="published" name="published" value="1" {% if article and article.published %}checked{% endif %}>
+                                    <label class="form-check-label" for="published">Published</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+            <label for="content" class="form-label">Content (HTML)</label>
+            <textarea id="content" name="content" class="form-control" rows="10" required>{{ article.content if article else '' }}</textarea>
+                                </div>
+          <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary">{% if article %}Update{% else %}Create{% endif %}</button>
+            <a href="{{ url_for('admin_articles') }}" class="btn btn-secondary ms-2">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+<!-- Initialize CKEditor 5 Classic Editor with rich media support -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
+<script>
+  ClassicEditor
+    .create(document.querySelector('#content'), {
+      // Enable file upload via CKEditor simple upload adapter
+      simpleUpload: {
+        uploadUrl: '{{ url_for("upload_image") }}'
+      },
+      toolbar: [
+        'heading', '|', 'bold', 'italic', 'underline', 'link', 'bulletedList', 'numberedList',
+        '|', 'uploadImage', 'mediaEmbed', 'insertTable', '|', 'undo', 'redo'
+      ],
+      link: {
+        addTargetToExternalLinks: true
+      },
+      mediaEmbed: {
+        previewsInData: true
+      }
+    })
+    .then(editor => {
+      // Sync editor data back to the textarea
+      editor.model.document.on('change:data', () => {
+        document.querySelector('#content').value = editor.getData();
+      });
+    })
+    .catch(error => console.error(error));
+</script>
+{% endblock %} 

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Login via Email{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('login') }}">Sign In</a>
+</li>
+<li class="breadcrumb-item active">Email Authentication</li>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+  <h2>Login with Email</h2>
+  {% if error %}
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+    </div>
+  {% endif %}
+  
+  <form method="post">
+    <div class="mb-3">
+      <div class="input-group">
+        <span class="input-group-text border-end-0 bg-white">
+          <i class="bi bi-envelope text-muted"></i>
+        </span>
+        <input 
+          type="email" 
+          class="form-control border-start-0" 
+          name="email" 
+          placeholder="Email" 
+          required
+          autocomplete="email">
+      </div>
+    </div>
+    
+    <div class="mb-3">
+      <div class="input-group">
+        <span class="input-group-text border-end-0 bg-white">
+          <i class="bi bi-lock text-muted"></i>
+        </span>
+        <input 
+          type="password" 
+          class="form-control border-start-0" 
+          name="password" 
+          id="password"
+          placeholder="Password" 
+          required
+          autocomplete="current-password">
+      </div>
+      <div class="form-check mt-2">
+        <input 
+          type="checkbox" 
+          class="form-check-input" 
+          id="showPassword" 
+          onchange="togglePassword('password', this.checked)">
+        <label class="form-check-label" for="showPassword">
+          Show password
+        </label>
+      </div>
+    </div>
+    
+    <button class="btn btn-primary w-100 mb-3">
+      <i class="bi bi-box-arrow-in-right me-2"></i>Login
+    </button>
+  </form>
+
+  <div class="text-center mt-3">
+    <a href="{{ url_for('login') }}" class="text-decoration-none">
+      <i class="bi bi-arrow-left me-1"></i>Back to Username Login
+    </a>
+  </div>
+</div>
+
+<script>
+function togglePassword(inputId, show) {
+  const input = document.getElementById(inputId);
+  input.type = show ? 'text' : 'password';
+}
+</script>
+{% endblock %}

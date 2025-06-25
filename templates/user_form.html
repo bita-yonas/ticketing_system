@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}{% if user %}Edit{% else %}New{% endif %} User{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{{ url_for('admin_console') }}">Admin Console</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('admin_users') }}">Manage Users</a></li>
+<li class="breadcrumb-item active">{% if user %}Edit{% else %}New{% endif %} User</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card shadow-sm no-hover">
+    <div class="card-body">
+      <h1 class="h2 mb-4">{% if user %}Edit{% else %}New{% endif %} User</h1>
+      <form method="post">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-control" required value="{{ user.username if user else '' }}">
+          </div>
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" name="email" class="form-control" required value="{{ user.email if user else '' }}">
+          </div>
+          <div class="col-md-6">
+            <label for="password" class="form-label">{% if user %}New Password (leave blank to keep current){% else %}Password{% endif %}</label>
+            <input type="password" id="password" name="password" class="form-control" {% if not user %}required{% endif %}>
+          </div>
+          <div class="col-md-6">
+            <label for="role" class="form-label">Role</label>
+            <select id="role" name="role" class="form-select">
+              <option value="user" {% if user and user.role=='user' %}selected{% endif %}>User</option>
+              <option value="agent" {% if user and user.role=='agent' %}selected{% endif %}>Agent</option>
+              <option value="super_agent" {% if user and user.role=='super_agent' %}selected{% endif %}>Super Agent</option>
+              <option value="it_admin" {% if user and user.role=='it_admin' %}selected{% endif %}>IT Administrator</option>
+              <option value="facilities_admin" {% if user and user.role=='facilities_admin' %}selected{% endif %}>Facilities & Events Administrator</option>
+              <option value="academic_admin" {% if user and user.role=='academic_admin' %}selected{% endif %}>Academic & Records Administrator</option>
+              <option value="administrative_admin" {% if user and user.role=='administrative_admin' %}selected{% endif %}>Administrative Services Administrator</option>
+              <option value="admin" {% if user and user.role=='admin' %}selected{% endif %}>Super Administrator</option>
+            </select>
+          </div>
+          <div class="col-md-6" id="categoryField" {% if user and (user.role not in ['agent', 'super_agent', 'it_admin', 'facilities_admin', 'academic_admin', 'administrative_admin']) %}style="display:none;"{% endif %}>
+            <label for="agent_category" class="form-label">Category</label>
+            <select id="agent_category" name="agent_category" class="form-select" {% if user and user.role in ['it_admin', 'facilities_admin', 'academic_admin', 'administrative_admin'] %}disabled{% endif %}>
+              {% for c in ['IT Support','Academic Services','Facilities & Events','Administrative Services'] %}
+              <option value="{{ c }}" {% if user and user.agent_category==c %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary">{% if user %}Update{% else %}Create{% endif %}</button>
+            <a href="{{ url_for('admin_users') }}" class="btn btn-secondary ms-2">Cancel</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var roleSelect = document.getElementById('role');
+    var categoryField = document.getElementById('categoryField');
+    var categorySelect = document.getElementById('agent_category');
+
+    function updateCategoryField() {
+      const role = roleSelect.value;
+      if (role === 'agent' || role === 'super_agent') {
+        categoryField.style.display = 'block';
+        categorySelect.disabled = false;
+      } else if (role === 'it_admin') {
+        categoryField.style.display = 'block';
+        categorySelect.value = 'IT Support';
+        categorySelect.disabled = true;
+      } else if (role === 'facilities_admin') {
+        categoryField.style.display = 'block';
+        categorySelect.value = 'Facilities & Events';
+        categorySelect.disabled = true;
+      } else if (role === 'academic_admin') {
+        categoryField.style.display = 'block';
+        categorySelect.value = 'Academic Services';
+        categorySelect.disabled = true;
+      } else if (role === 'administrative_admin') {
+        categoryField.style.display = 'block';
+        categorySelect.value = 'Administrative Services';
+        categorySelect.disabled = true;
+      } else {
+        categoryField.style.display = 'none';
+      }
+    }
+
+    roleSelect.addEventListener('change', updateCategoryField);
+    updateCategoryField(); // Run on page load
+  });
+</script>
+{% endblock %} 

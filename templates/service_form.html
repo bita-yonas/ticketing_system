@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}{% if service %}Edit{% else %}New{% endif %} Service{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{{ url_for('admin_console') }}">Admin Console</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('admin_services') }}">Manage Services</a></li>
+<li class="breadcrumb-item active">{% if service %}Edit{% else %}New{% endif %} Service</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card shadow-sm no-hover">
+    <div class="card-body">
+      <h1 class="h2 mb-4">{% if service %}Edit{% else %}New{% endif %} Service</h1>
+      <form method="post">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="slug" class="form-label">Slug</label>
+            <input type="text" id="slug" name="slug" class="form-control" required value="{{ service.slug if service else '' }}">
+            <div class="form-text">Unique identifier used in URLs (e.g. "it_support")</div>
+          </div>
+          <div class="col-md-6">
+            <label for="icon" class="form-label">Icon</label>
+            <div class="input-group align-items-center">
+              <select id="icon" name="icon" class="form-select" required>
+                {% set icon_options = ['mortarboard-fill','pc-display','building','folder','gear-fill','chat-dots','envelope-fill','phone-fill','info-circle','journal-text','box-seam','bell-fill'] %}
+                {% for icon_name in icon_options %}
+                <option value="{{ icon_name }}" {% if service and service.icon==icon_name %}selected{% endif %}>{{ icon_name|replace('-', ' ')|title }}</option>
+                {% endfor %}
+              </select>
+              <span class="input-group-text"><i id="iconPreview" class="bi bi-{{ service.icon if service else icon_options[0] }}"></i></span>
+            </div>
+            <div class="form-text">Select an icon for the service</div>
+          </div>
+          <div class="col-md-6">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" id="title" name="title" class="form-control" required value="{{ service.title if service else '' }}">
+          </div>
+          <div class="col-md-6">
+            <label for="color" class="form-label">Color</label>
+            <div class="input-group align-items-center">
+              <select id="color" name="color" class="form-select" required>
+                {% for c in ['primary','success','info','warning','secondary','dark'] %}
+                <option value="{{ c }}" {% if service and service.color==c %}selected{% endif %}>{{ c|capitalize }}</option>
+                {% endfor %}
+              </select>
+              <span id="colorPreview" class="input-group-text bg-{{ service.color if service else 'primary' }}">&nbsp;&nbsp;&nbsp;</span>
+            </div>
+            <div class="form-text">Bootstrap background color preview</div>
+          </div>
+          <div class="col-12">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" rows="3" class="form-control">{{ service.description if service else '' }}</textarea>
+          </div>
+          <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary">{% if service %}Update{% else %}Create{% endif %}</button>
+            <a href="{{ url_for('admin_services') }}" class="btn btn-secondary ms-2">Cancel</a>
+          </div>
+        </div>
+      </form>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const iconSelect = document.getElementById('icon');
+          const iconPreview = document.getElementById('iconPreview');
+          iconSelect.addEventListener('change', function() {
+            iconPreview.className = 'bi bi-' + this.value;
+          });
+          const colorSelect = document.getElementById('color');
+          const colorPreview = document.getElementById('colorPreview');
+          colorSelect.addEventListener('change', function() {
+            colorPreview.className = 'input-group-text bg-' + this.value;
+          });
+        });
+      </script>
+    </div>
+  </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+{% block title %}All Knowledge Base Articles{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('help_articles') }}">Knowledge Base</a>
+</li>
+<li class="breadcrumb-item active">All Articles</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <header class="mb-5">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1 class="display-5 fw-bold mb-2">All Knowledge Base Articles</h1>
+        <p class="text-muted">Complete list of help articles and documentation</p>
+      </div>
+      <div class="d-none d-md-block">
+        <a href="{{ url_for('help_articles') }}" class="btn btn-primary category-btn shadow-sm">
+          <i class="bi bi-grid-3x3-gap me-2"></i>Browse by Category
+        </a>
+      </div>
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <form action="{{ url_for('kb_search') }}" method="get">
+          <div class="input-group mb-3">
+            <input type="text" name="q" class="form-control" placeholder="Search articles..." required>
+            <button class="btn btn-primary" type="submit">
+              <i class="bi bi-search me-1"></i> Search
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
+        <div class="btn-group me-2" role="group">
+          <button type="button" class="btn btn-outline-secondary active" id="showAllBtn">All</button>
+          <button type="button" class="btn btn-outline-secondary" id="showAcademicBtn">Academic</button>
+          <button type="button" class="btn btn-outline-secondary" id="showITBtn">IT Support</button>
+          <button type="button" class="btn btn-outline-secondary" id="showFacilitiesBtn">Facilities</button>
+          <button type="button" class="btn btn-outline-secondary" id="showAdminBtn">Administrative</button>
+        </div>
+        
+        <!-- View Toggle Buttons -->
+        <div class="btn-group" role="group" aria-label="View options">
+          <button type="button" class="btn btn-outline-primary active" id="listViewBtn">
+            <i class="bi bi-list-ul"></i>
+          </button>
+          <button type="button" class="btn btn-outline-primary" id="tileViewBtn">
+            <i class="bi bi-grid-3x3-gap"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- List View (Table) -->
+  <div id="listView" class="view-container">
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0" id="articlesTable">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-4">Article Title</th>
+                <th style="width: 180px;">Category</th>
+                <th>Description</th>
+                <th style="width: 100px;"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for art in articles %}
+                <tr class="article-row" data-category="{{ art.category_slug }}">
+                  <td class="ps-4">
+                    <a href="{{ url_for('article', slug=art.slug) }}" class="text-decoration-none fw-medium">
+                      <i class="bi bi-{{ art.icon }} {{ art.icon_color }} me-2"></i>{{ art.title }}
+                    </a>
+                  </td>
+                  <td><span class="badge {{ art.icon_bg }} {{ art.icon_color }}">{{ art.category }}</span></td>
+                  <td>{{ art.snippet|safe }}…</td>
+                  <td class="text-end pe-4">
+                    <a href="{{ url_for('article', slug=art.slug) }}" class="btn btn-sm btn-outline-primary custom-btn-hover">View</a>
+                  </td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="4" class="text-center py-4">No articles found.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tile View (Grid) -->
+  <div id="tileView" class="view-container d-none">
+    <div class="row g-4">
+      {% for art in articles %}
+        <div class="col-md-6 col-lg-4 article-tile" data-category="{{ art.category_slug }}">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="icon-wrapper {{ art.icon_bg }} me-3">
+                  <i class="bi bi-{{ art.icon }} {{ art.icon_color }}"></i>
+                </div>
+                <div>
+                  <span class="badge {{ art.icon_bg }} {{ art.icon_color }}">{{ art.category }}</span>
+                </div>
+              </div>
+              <h3 class="h5 mb-3">{{ art.title }}</h3>
+              <p class="text-muted small mb-3">{{ art.snippet|safe }}…</p>
+              <a href="{{ url_for('article', slug=art.slug) }}" class="btn btn-sm btn-outline-primary custom-btn-hover w-100">
+                View Article
+              </a>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="col-12 text-center py-4">No articles found.</div>
+      {% endfor %}
+    </div>
+  </div>
+  
+  <!-- No Results Message (hidden by default) -->
+  <div id="noResultsMessage" class="text-center py-5 d-none">
+    <div class="mb-4">
+      <i class="bi bi-search display-1 text-muted"></i>
+    </div>
+    <h2 class="h4">No articles found</h2>
+    <p class="text-muted">No articles match the selected category</p>
+    <button class="btn btn-primary mt-3" id="resetFilterBtn">
+      <i class="bi bi-arrow-repeat me-2"></i>Show All Articles
+    </button>
+  </div>
+  
+  <div class="d-md-none mt-4">
+    <a href="{{ url_for('help_articles') }}" class="btn btn-primary category-btn shadow-sm w-100">
+      <i class="bi bi-grid-3x3-gap me-2"></i>Browse by Category
+    </a>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // View toggle functionality
+    const listViewBtn = document.getElementById('listViewBtn');
+    const tileViewBtn = document.getElementById('tileViewBtn');
+    const listView = document.getElementById('listView');
+    const tileView = document.getElementById('tileView');
+    
+    // Set initial view preference from localStorage or default to list view
+    const viewPreference = localStorage.getItem('articlesViewPreference') || 'list';
+    
+    function setViewMode(mode) {
+      if (mode === 'list') {
+        listView.classList.remove('d-none');
+        tileView.classList.add('d-none');
+        listViewBtn.classList.add('active');
+        tileViewBtn.classList.remove('active');
+      } else if (mode === 'tile') {
+        listView.classList.add('d-none');
+        tileView.classList.remove('d-none');
+        listViewBtn.classList.remove('active');
+        tileViewBtn.classList.add('active');
+      }
+      // Save preference
+      localStorage.setItem('articlesViewPreference', mode);
+    }
+    
+    // Apply initial view preference
+    setViewMode(viewPreference);
+    
+    // View toggle event listeners
+    listViewBtn.addEventListener('click', function() {
+      setViewMode('list');
+    });
+    
+    tileViewBtn.addEventListener('click', function() {
+      setViewMode('tile');
+    });
+    
+    // Category filter functionality
+    const showAllBtn = document.getElementById('showAllBtn');
+    const showAcademicBtn = document.getElementById('showAcademicBtn');
+    const showITBtn = document.getElementById('showITBtn');
+    const showFacilitiesBtn = document.getElementById('showFacilitiesBtn');
+    const showAdminBtn = document.getElementById('showAdminBtn');
+    const resetFilterBtn = document.getElementById('resetFilterBtn');
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    const articleRows = document.querySelectorAll('.article-row');
+    const articleTiles = document.querySelectorAll('.article-tile');
+    
+    // Function to filter articles
+    function filterArticles(category) {
+      let visibleCount = 0;
+      
+      // Filter list view (table rows)
+      articleRows.forEach(row => {
+        if (category === 'all' || row.getAttribute('data-category') === category) {
+          row.classList.remove('d-none');
+          visibleCount++;
+        } else {
+          row.classList.add('d-none');
+        }
+      });
+      
+      // Filter tile view (cards)
+      articleTiles.forEach(tile => {
+        if (category === 'all' || tile.getAttribute('data-category') === category) {
+          tile.classList.remove('d-none');
+        } else {
+          tile.classList.add('d-none');
+        }
+      });
+      
+      // Show/hide no results message
+      if (visibleCount === 0) {
+        noResultsMessage.classList.remove('d-none');
+      } else {
+        noResultsMessage.classList.add('d-none');
+      }
+      
+      // Update active button state
+      document.querySelectorAll('.btn-group .btn').forEach(btn => {
+        if (btn.id === 'listViewBtn' || btn.id === 'tileViewBtn') return; // Skip view toggle buttons
+        btn.classList.remove('active');
+      });
+    }
+    
+    // Event listeners for filter buttons
+    showAllBtn.addEventListener('click', function() {
+      filterArticles('all');
+      this.classList.add('active');
+    });
+    
+    showAcademicBtn.addEventListener('click', function() {
+      filterArticles('academic');
+      this.classList.add('active');
+    });
+    
+    showITBtn.addEventListener('click', function() {
+      filterArticles('it');
+      this.classList.add('active');
+    });
+    
+    showFacilitiesBtn.addEventListener('click', function() {
+      filterArticles('facilities');
+      this.classList.add('active');
+    });
+    
+    showAdminBtn.addEventListener('click', function() {
+      filterArticles('admin');
+      this.classList.add('active');
+    });
+    
+    resetFilterBtn.addEventListener('click', function() {
+      filterArticles('all');
+      showAllBtn.classList.add('active');
+    });
+  });
+</script>
+
+<style>
+body {
+  background-color: #f8f9fa;
+}
+
+.table > :not(caption) > * > * {
+  padding: 1rem 0.5rem;
+}
+
+.badge {
+  font-weight: 500;
+  padding: 0.5em 0.8em;
+}
+
+.table a {
+  color: #212529;
+}
+
+.table a:hover {
+  color: #0d6efd;
+}
+
+.btn-group .btn {
+  padding: 0.375rem 0.75rem;
+}
+
+@media (max-width: 767.98px) {
+  .btn-group .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Custom button hover styles */
+.btn-outline-primary.custom-btn-hover:hover {
+  background-color: rgba(13, 110, 253, 0.15);
+  color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-outline-success.custom-btn-hover:hover {
+  background-color: rgba(25, 135, 84, 0.15);
+  color: #198754;
+  border-color: #198754;
+}
+
+.btn-outline-info.custom-btn-hover:hover {
+  background-color: rgba(13, 202, 240, 0.15);
+  color: #0dcaf0;
+  border-color: #0dcaf0;
+}
+
+.btn-outline-warning.custom-btn-hover:hover {
+  background-color: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+/* Category Button Styling */
+.category-btn {
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  color: #fff !important; /* Ensure text is white */
+}
+
+.category-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+  color: #fff !important; /* Keep text white on hover */
+}
+
+.category-btn:active {
+  transform: translateY(0);
+}
+
+.category-btn i {
+  font-size: 1.1rem;
+}
+
+/* Tile View Styling */
+.icon-wrapper {
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.article-tile .card {
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.article-tile .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* View toggle buttons */
+#listViewBtn.active, #tileViewBtn.active {
+  background-color: #0d6efd;
+  color: white !important;
+  border-color: #0d6efd;
+}
+
+/* Ensure all blue buttons have white text */
+.btn-primary {
+  color: #fff !important;
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+  color: #fff !important;
+}
+
+/* Reset button in No Results Message */
+#resetFilterBtn {
+  color: #fff !important;
+}
+</style>
+{% endblock %} 

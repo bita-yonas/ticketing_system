@@ -1,0 +1,692 @@
+{% extends 'base.html' %}
+{% block title %}Admin Console{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Admin Console Management Buttons */
+.admin-actions {
+    margin-top: 3rem;
+}
+
+.action-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    transition: transform 0.25s ease;
+}
+
+.action-card:hover {
+    transform: translateY(-6px);
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.icon-circle i {
+    font-size: 2.5rem;
+}
+
+.card-title {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.card-text {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+.btn-light {
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid #dee2e6;
+    background: white;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-light::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+/* Button hover effects */
+.action-card.hover-bg-primary:hover .btn-light::before {
+    left: 0;
+    background-color: #0d6efd;
+}
+
+.action-card.hover-bg-violet:hover .btn-light::before {
+    left: 0;
+    background-color: #0dcaf0;
+}
+
+.action-card.hover-bg-warning:hover .btn-light::before {
+    left: 0;
+    background-color: #ffc107;
+}
+
+/* Ensure text color is white on hover for all cards */
+.action-card:hover .btn-light,
+.action-card:hover .btn-light *,
+.action-card.hover-bg-warning:hover .btn-light {
+    color: white !important;
+    z-index: 2;
+    position: relative;
+}
+
+.action-card.hover-bg-primary:hover .btn-light {
+    border-color: #0d6efd;
+    box-shadow: 0 0 20px rgba(13, 110, 253, 0.4);
+}
+
+.action-card.hover-bg-violet:hover .btn-light {
+    border-color: #0dcaf0;
+    box-shadow: 0 0 20px rgba(13, 202, 240, 0.4);
+}
+
+.action-card.hover-bg-warning:hover .btn-light {
+    border-color: #ffc107;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
+}
+
+/* Subtle backgrounds */
+.bg-primary-subtle {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+}
+
+.bg-violet-subtle {
+    background-color: rgba(13, 202, 240, 0.1) !important;
+}
+
+.bg-warning-subtle {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+/* Text colors */
+.text-violet {
+    color: #0dcaf0 !important;
+}
+
+/* Arrow transition */
+.btn-light i {
+    transition: transform 0.3s ease;
+}
+
+.action-card:hover .btn-light i {
+    transform: translateX(5px);
+}
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Admin Console</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                {% if user_role == 'admin' %}
+                    Admin Console
+                {% elif user_role == 'it_admin' %}
+                    IT Department Management
+                {% elif user_role == 'facilities_admin' %}
+                    Facilities & Events Management
+                {% elif user_role == 'academic_admin' %}
+                    Academic Services Management
+                {% elif user_role == 'administrative_admin' %}
+                    Administrative Services Management
+                {% endif %}
+            </h1>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% if user_role == 'admin' %}
+            <!-- Users Overview -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="h3 mb-0">Users Overview</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Department</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in users %}
+                                    <tr>
+                                        <td>{{ user.username }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ 'danger' if user.role == 'admin' else 'info' if user.role == 'super_agent' else 'success' if user.role == 'agent' else 'secondary' }}">
+                                                {% if user.role == 'admin' %}
+                                                    Super Administrator
+                                                {% else %}
+                                                    {{ user.role|replace('_', ' ')|title }}
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td>{{ user.agent_category or '-' }}</td>
+                                        <td>
+                                            <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i> Edit
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Management Actions -->
+            <div class="col-12 admin-actions">
+                <div class="row g-4 justify-content-center">
+                    <!-- Manage Users -->
+                    <div class="col-12 col-md-4">
+                        <a href="{{ url_for('admin_users') }}" class="text-decoration-none">
+                            <div class="card action-card shadow-sm h-100 hover-bg-primary">
+                                <div class="card-body text-center p-5">
+                                    <div class="icon-circle bg-primary-subtle mb-4">
+                                        <i class="bi bi-people-fill fs-1 text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold mb-3">Manage Users</h5>
+                                    <p class="card-text text-muted">Add, edit, or manage user accounts and permissions</p>
+                                    <div class="mt-4">
+                                        <span class="btn btn-light fw-medium">
+                                            View Users <i class="bi bi-arrow-right ms-2"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Manage Articles -->
+                    <div class="col-12 col-md-4">
+                        <a href="{{ url_for('admin_articles') }}" class="text-decoration-none">
+                            <div class="card action-card shadow-sm h-100 hover-bg-violet">
+                                <div class="card-body text-center p-5">
+                                    <div class="icon-circle bg-violet-subtle mb-4">
+                                        <i class="bi bi-journal-text fs-1 text-violet"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold mb-3">Manage Articles</h5>
+                                    <p class="card-text text-muted">Create and manage knowledge base articles</p>
+                                    <div class="mt-4">
+                                        <span class="btn btn-light fw-medium">
+                                            View Articles <i class="bi bi-arrow-right ms-2"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Manage Services -->
+                    <div class="col-12 col-md-4">
+                        <a href="{{ url_for('admin_services') }}" class="text-decoration-none">
+                            <div class="card action-card shadow-sm h-100 hover-bg-warning">
+                                <div class="card-body text-center p-5">
+                                    <div class="icon-circle bg-warning-subtle mb-4">
+                                        <i class="bi bi-gear-fill fs-1 text-warning"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold mb-3">Manage Services</h5>
+                                    <p class="card-text text-muted">Configure and manage available services</p>
+                                    <div class="mt-4">
+                                        <span class="btn btn-light fw-medium">
+                                            View Services <i class="bi bi-arrow-right ms-2"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if user_role.endswith('_admin') %}
+            <!-- Department Tickets Overview -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h3 mb-4">Department Tickets</h2>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>User</th>
+                                        <th>Assignment</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ticket in tickets %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ ticket.title }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ 'success' if ticket.status == 'closed' else 'warning' if ticket.status == 'in_progress' else 'primary' }}">
+                                                {{ ticket.status|replace('_', ' ')|title }}
+                                            </span>
+                                        </td>
+                                        <td>{{ ticket.created_at }}</td>
+                                        <td>{{ ticket.username }}</td>
+                                        <td>
+                                            {% if ticket.assigned_agent_id %}
+                                                <span class="badge bg-info">Assigned</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Unassigned</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('ticket_detail', ticket_id=ticket.id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i> View
+                                            </a>
+                                            {% if not ticket.assigned_agent_id %}
+                                                <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#assignModal{{ ticket.id }}">
+                                                    <i class="bi bi-person-plus"></i> Assign
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+
+                                    <!-- Assignment Modal -->
+                                    <div class="modal fade" id="assignModal{{ ticket.id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Assign Ticket #{{ ticket.id }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="{{ url_for('assign_ticket', ticket_id=ticket.id) }}" method="post">
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label for="assigned_agent_id" class="form-label">Select Agent</label>
+                                                            <select name="assigned_agent_id" id="assigned_agent_id" class="form-select" required>
+                                                                <option value="">Choose an agent...</option>
+                                                                {% for agent in agents %}
+                                                                    <option value="{{ agent.id }}">{{ agent.username }} ({{ agent.agent_category }})</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-success">Assign Ticket</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Bootstrap and custom hover-lift handle card animations -->
+<style>
+.stats-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.stats-card:hover .bi-plus-circle-dotted {
+    opacity: 1;
+}
+
+.stats-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-right: 15px;
+    color: #fff;
+}
+
+.stats-info {
+    flex: 1;
+}
+
+.stats-info h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.stats-info p {
+    color: #6c757d;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+.bi-plus-circle-dotted {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    content: "";
+}
+
+/* Toggle Metrics Button Styling */
+.toggle-metrics-btn {
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    color: #fff !important;
+}
+
+.toggle-metrics-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+    color: #fff !important;
+}
+
+.toggle-metrics-btn:active {
+    transform: translateY(0);
+}
+
+.toggle-metrics-btn i {
+    font-size: 1.1rem;
+}
+
+/* Ensure badges have appropriate text color */
+.badge.bg-primary {
+    color: #fff !important;
+}
+
+/* Ensure all blue buttons have white text */
+.btn-primary {
+    color: #fff !important;
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+    color: #fff !important;
+}
+
+/* Disable hover animation on the Manage Articles card */
+.no-hover {
+    transition: none !important;
+}
+
+.no-hover:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Hover lift effect for cards */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Modern Management Buttons Styling */
+.btn-modern {
+    padding: 1.5rem 3rem;
+    min-width: 300px;
+    border: none;
+    border-radius: 15px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern .btn-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+}
+
+.btn-modern i {
+    font-size: 2.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.btn-modern span {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.btn-users {
+    background: linear-gradient(135deg, #4158D0 0%, #C850C0 100%);
+}
+
+.btn-articles {
+    background: linear-gradient(135deg, #43CBFF 0%, #9708CC 100%);
+}
+
+.btn-services {
+    background: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+}
+
+.btn-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.btn-modern:active {
+    transform: translateY(-2px);
+}
+
+.btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.btn-modern:hover::before {
+    left: 100%;
+}
+
+/* Bubble Button Styling */
+.bubble-wrapper {
+    position: relative;
+    padding: 2px;
+    background: linear-gradient(45deg, 
+        rgba(255,255,255,0.2), 
+        rgba(255,255,255,0.05), 
+        rgba(255,255,255,0.1)
+    );
+    border-radius: 35px;
+    box-shadow: 
+        0 8px 30px rgba(0,0,0,0.1),
+        inset 0 0 0 2px rgba(255,255,255,0.15);
+}
+
+.btn-bubble {
+    padding: 5rem 8rem;
+    min-width: 800px;
+    background: rgba(255,255,255,0.05);
+    border: none;
+    border-radius: 33px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-bubble::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.03);
+    border-radius: inherit;
+    z-index: 1;
+    transition: opacity 0.4s ease;
+}
+
+.btn-bubble .btn-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    color: rgba(255,255,255,0.8);
+}
+
+.btn-bubble i {
+    font-size: 7rem;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    transition: all 0.4s ease;
+}
+
+.btn-bubble span {
+    font-size: 3.5rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Hover Effects */
+.bubble-wrapper:hover {
+    background: linear-gradient(45deg, 
+        rgba(64,223,255,0.15),
+        rgba(255,255,255,0.05),
+        rgba(64,223,255,0.15)
+    );
+    box-shadow: 
+        0 8px 25px rgba(64,223,255,0.2),
+        inset 0 0 0 1px rgba(64,223,255,0.2);
+}
+
+.btn-bubble:hover {
+    background: rgba(64,223,255,0.1);
+    transform: translateY(-5px) scale(1.02);
+}
+
+.btn-bubble:hover::before {
+    background: radial-gradient(
+        circle at center,
+        rgba(64,223,255,0.1) 0%,
+        rgba(255,255,255,0) 70%
+    );
+}
+
+.btn-bubble:hover .btn-content {
+    color: rgba(255,255,255,0.95);
+}
+
+.btn-bubble:hover i {
+    transform: scale(1.1);
+    color: rgb(64,223,255);
+    filter: drop-shadow(0 0 8px rgba(64,223,255,0.5));
+}
+
+/* Active state */
+.btn-bubble:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+/* Custom background for the buttons section */
+.col-12 {
+    position: relative;
+    background: linear-gradient(
+        to right bottom,
+        rgba(17,24,39,0.95),
+        rgba(17,24,39,0.8)
+    );
+    border-radius: 40px;
+    padding: 4rem;
+    margin-top: 3rem;
+}
+
+/* Adjust spacing between buttons */
+.d-flex.justify-content-between {
+    gap: 3rem;
+}
+
+/* Add a subtle pulse animation to the icons */
+@keyframes subtle-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.btn-bubble:hover i {
+    animation: subtle-pulse 2s infinite;
+}
+</style>
+{% endblock %}

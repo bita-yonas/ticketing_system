@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Service Catalog{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Service Catalog</li>
+{% endblock %}
+
+{% block content %}
+<div class="ticket-container">
+  <div class="ticket-header">
+    <div>
+      <h2>Service Catalog</h2>
+      <p class="text-muted mb-0">Browse and request available services</p>
+    </div>
+    <div>
+      <a href="{{ url_for('list_tickets') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-ticket-detailed me-2"></i>View My Tickets
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    {% for s in services %}
+    <div class="col-md-6">
+      <a href="{{ url_for('new_ticket', service=s.slug) }}" class="text-decoration-none">
+        <div class="service-card">
+          <div class="service-icon bg-{{ s.color }}-subtle">
+            <i class="bi bi-{{ s.icon }}"></i>
+          </div>
+          <h4>{{ s.title }}</h4>
+          <p>{{ s.description }}</p>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+    {# Fallback static administrative services card if missing #}
+    {% if not (services|selectattr('slug','equalto','admin_services')|list) %}
+    <div class="col-md-6">
+      <a href="{{ url_for('new_ticket', service='admin_services') }}" class="text-decoration-none">
+        <div class="service-card">
+          <div class="service-icon bg-warning-subtle">
+            <i class="bi bi-folder"></i>
+          </div>
+          <h4>Administrative Services</h4>
+          <p>ID cards, parking permits, and document requests</p>
+        </div>
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %} 

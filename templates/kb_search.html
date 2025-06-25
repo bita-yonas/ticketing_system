@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Knowledge Base Search{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('help_articles') }}">Knowledge Base</a>
+</li>
+<li class="breadcrumb-item active">Search Results</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Large Back to Knowledge Base button at the top -->
+  <div class="mb-4 text-center">
+    <a href="{{ url_for('help_articles') }}" class="btn btn-lg btn-primary px-4 py-2">
+      <i class="bi bi-arrow-left-circle-fill me-2"></i>Back to Knowledge Base
+    </a>
+  </div>
+
+  <header class="mb-5">
+    <div class="text-center">
+      <h1 class="display-5 fw-bold mb-2 kb-title">Knowledge Base Search</h1>
+      <p class="text-muted">Search results for: <span class="fw-bold">"{{ query }}"</span></p>
+    </div>
+    
+    <div class="mt-4">
+      <form action="{{ url_for('kb_search') }}" method="get">
+        <div class="input-group mb-3">
+          <input type="text" name="q" class="form-control" placeholder="Search articles..." value="{{ query }}" required>
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-search me-1"></i> Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </header>
+
+  <!-- Search Results -->
+  {% if articles %}
+    <div class="row g-4">
+      {% for article in articles %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <!-- Category and icon in the card header -->
+            <div class="card-header bg-white d-flex justify-content-between align-items-center p-3 border-0">
+              <div class="icon-wrapper {{ article.icon_bg }} me-2">
+                <i class="bi bi-{{ article.icon }} {{ article.icon_color }}"></i>
+              </div>
+              <span class="badge {{ article.icon_bg }} {{ article.icon_color }} px-3 py-2 shadow-sm">
+                {{ article.category }}
+              </span>
+            </div>
+            
+            <div class="card-body p-4 pt-2">
+              <h3 class="h5 mb-3">{{ article.title }}</h3>
+              <p class="text-muted small mb-3">{{ article.description }}</p>
+              <a href="{{ url_for('article', slug=article.slug) }}" class="btn btn-sm btn-outline-primary w-100">
+                View Article
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5">
+      <div class="mb-4">
+        <i class="bi bi-search display-1 text-muted"></i>
+      </div>
+      <h2 class="h4">No articles found</h2>
+      <p class="text-muted">We couldn't find any articles matching your search query. Try different keywords or browse by category.</p>
+      <a href="{{ url_for('help_articles') }}" class="btn btn-lg btn-primary mt-3">
+        <i class="bi bi-arrow-left-circle-fill me-2"></i>Back to Knowledge Base
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+body {
+  background-color: #f8f9fa;
+}
+
+.kb-title {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.badge {
+  font-weight: 500;
+}
+
+.card-header {
+  border-radius: 0.5rem 0.5rem 0 0 !important;
+}
+
+/* Ensure all blue buttons have white text */
+.btn-primary {
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+  color: #fff !important;
+}
+</style>
+{% endblock %} 

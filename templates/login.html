@@ -1,0 +1,172 @@
+{% extends 'base.html' %} {% block title %}Login{% endblock %} {% block
+breadcrumbs %}
+<li class="breadcrumb-item active">Login</li>
+{% endblock %} {% block content %}
+<div class="login-container">
+  <h2>Welcome Back</h2>
+  {% if error %}
+  <div class="alert alert-danger">
+    <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+  </div>
+  {% endif %}
+
+  <!-- Traditional Login Form -->
+  <form method="post" class="mb-4">
+    <div class="mb-3">
+      <div class="input-group">
+        <span class="input-group-text border-end-0 bg-white">
+          <i class="bi bi-person text-muted"></i>
+        </span>
+        <input
+          class="form-control border-start-0"
+          name="login"
+          placeholder="Username or Email"
+          required
+          autocomplete="username"
+        />
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <div class="input-group">
+        <span class="input-group-text border-end-0 bg-white">
+          <i class="bi bi-lock text-muted"></i>
+        </span>
+        <input
+          type="password"
+          class="form-control border-start-0"
+          name="password"
+          placeholder="Password"
+          required
+          autocomplete="current-password"
+        />
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 mb-3">
+      <i class="bi bi-box-arrow-in-right me-2"></i>Login
+    </button>
+  </form>
+
+  <!-- Divider -->
+  <div class="divider mb-4">
+    <span>OR</span>
+  </div>
+
+  <!-- Google Sign In Button -->
+  <button id="google-login" class="btn btn-outline-danger w-100">
+    <i class="bi bi-google me-2"></i>Sign in with Google
+  </button>
+
+  <!-- Error message container -->
+  <div id="auth-error" class="alert alert-danger mt-3" style="display: none">
+    <i class="bi bi-exclamation-circle me-2"></i>
+    <span id="error-message"></span>
+  </div>
+</div>
+
+<!-- Add custom styles -->
+<style>
+  .login-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #6c757d;
+    margin: 1.5rem 0;
+  }
+
+  .divider::before,
+  .divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .divider span {
+    padding: 0 1rem;
+  }
+
+  .btn {
+    position: relative;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn i {
+    font-size: 1.1rem;
+  }
+</style>
+
+<!-- Firebase Authentication Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const errorDiv = document.getElementById("auth-error");
+    const errorMessage = document.getElementById("error-message");
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorDiv.style.display = "block";
+    }
+
+    function hideError() {
+      errorDiv.style.display = "none";
+    }
+
+    async function signInWithProvider(provider, providerName) {
+      hideError();
+      try {
+        // First try popup
+        const result = await firebase.auth().signInWithPopup(provider);
+        const idToken = await result.user.getIdToken();
+        window.location.href = `/firebase-callback?token=${idToken}`;
+      } catch (error) {
+        if (error.code === "auth/popup-blocked") {
+          try {
+            // If popup is blocked, try redirect
+            await firebase.auth().signInWithRedirect(provider);
+          } catch (redirectError) {
+            console.error(`${providerName} redirect error:`, redirectError);
+            showError(redirectError.message);
+          }
+        } else {
+          console.error(`${providerName} sign in error:`, error);
+          showError(error.message);
+        }
+      }
+    }
+
+    // Set up auth state change listener
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        // User is signed in, get the token and redirect
+        user.getIdToken().then(function (idToken) {
+          window.location.href = `/firebase-callback?token=${idToken}`;
+        });
+      }
+    });
+
+    // Google Sign In
+    document
+      .getElementById("google-login")
+      .addEventListener("click", function () {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        signInWithProvider(provider, "Google");
+      });
+  });
+</script>
+{% endblock %}

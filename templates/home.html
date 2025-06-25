@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block show_breadcrumbs %}{% endblock %}
+
+{% block content %}
+<section class="hero text-center py-5 mb-0">
+  <div class="hero-inner">
+    {% if session.user_id %}
+      <h1 class="fw-bold mb-2">Welcome back, {{ session.username }}! 👋</h1>
+      <p class="lead mb-4">What can we assist you with today?</p>
+    {% else %}
+      <h1 class="fw-bold mb-4">Your Support Hub 🎯</h1>
+      <p class="lead mb-4">Fast, reliable support at your fingertips</p>
+    {% endif %}
+
+    <form action="{{ url_for('search') }}" method="get" class="d-flex justify-content-center">
+      <div class="input-group input-group-lg search-box">
+        <span class="input-group-text bg-white border-0">
+          <i class="bi bi-search fs-3"></i>
+        </span>
+        <input
+          type="text"
+          name="q"
+          class="form-control border-0 shadow-sm"
+          placeholder="Search tickets or services..."
+          required>
+        <button type="submit" class="btn btn-primary">
+          Search
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row g-4 justify-content-center">
+    <!-- Knowledge Base -->
+    <div class="col-12 col-md-6">
+      <a href="{{ url_for('help_articles') }}" class="text-decoration-none">
+        <div class="card action-card shadow-sm h-100 hover-bg-primary">
+          <div class="card-body text-center p-5">
+            <div class="icon-circle bg-primary-subtle mb-4">
+              <i class="bi bi-book fs-1 text-primary"></i>
+            </div>
+            <h5 class="card-title fw-bold mb-3">Knowledge Base</h5>
+            <p class="card-text text-muted">Find instant solutions in our comprehensive help guides and FAQs</p>
+            <div class="mt-4">
+              <span class="btn btn-light fw-medium">
+                Browse Articles <i class="bi bi-arrow-right ms-2"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+    
+    <!-- Service Catalog -->
+    <div class="col-12 col-md-6">
+      <a href="{{ url_for('services') }}" class="text-decoration-none">
+        <div class="card action-card shadow-sm h-100 hover-bg-warning">
+          <div class="card-body text-center p-5">
+            <div class="icon-circle bg-warning-subtle mb-4">
+              <i class="bi bi-grid-3x3-gap fs-1 text-warning"></i>
+            </div>
+            <h5 class="card-title fw-bold mb-3">Service Catalog</h5>
+            <p class="card-text text-muted">Explore our range of services and submit new requests</p>
+            <div class="mt-4">
+              <span class="btn btn-light fw-medium">
+                View Services <i class="bi bi-arrow-right ms-2"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

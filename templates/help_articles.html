@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% block title %}Knowledge Base{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Knowledge Base</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <header class="text-center mb-5">
+        <h1 class="display-5 fw-bold mb-3 kb-title">Knowledge Base</h1>
+        <p class="lead kb-subtitle col-md-8 mx-auto mb-0">Find instant solutions to common questions with our comprehensive help guides</p>
+    </header>
+
+    <!-- Search bar -->
+    <div class="d-flex justify-content-center mt-4 mb-5">
+        <form action="{{ url_for('kb_search') }}" method="get" class="col-md-6">
+            <div class="input-group input-group-lg shadow-sm">
+                <input type="text" name="q" class="form-control" placeholder="Search articles..." required>
+                <button class="btn btn-primary px-4" type="submit">
+                    <i class="bi bi-search me-2"></i>Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row g-5">
+        <!-- Academic Services Section -->
+        <div class="col-12 mb-2">
+            <div class="category-section">
+                <div class="category-header d-flex align-items-center bg-white p-4 rounded-top shadow-sm border-start border-5 border-primary">
+                    <div class="category-icon bg-primary-subtle me-4">
+                        <i class="bi bi-mortarboard-fill text-primary"></i>
+                    </div>
+                    <div>
+                        <h2 class="h3 mb-0">Academic Services</h2>
+                        <p class="text-muted mb-0 mt-1">Transcripts, enrollment verification, and academic records</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mt-4">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('article', slug='transcript-request') }}" class="text-decoration-none">
+                            <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="category-badge bg-primary-subtle text-primary px-3 py-1 rounded-pill me-2">Academic</span>
+                                    <span class="small text-muted"><i class="bi bi-eye me-1"></i> Most viewed</span>
+                                </div>
+                                <h3 class="h4 mb-3">How to Request Official Transcripts</h3>
+                                <p class="mb-3 text-muted">Learn how to request and receive your official academic transcripts.</p>
+                                <div class="text-primary d-inline-flex align-items-center mt-2">
+                                    Read article <i class="bi bi-arrow-right ms-2"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('article', slug='enrollment-verification') }}" class="text-decoration-none">
+                            <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="category-badge bg-primary-subtle text-primary px-3 py-1 rounded-pill me-2">Academic</span>
+                                </div>
+                                <h3 class="h4 mb-3">Enrollment Verification Guide</h3>
+                                <p class="mb-3 text-muted">How to verify your enrollment status for insurance or employment purposes.</p>
+                                <div class="text-primary d-inline-flex align-items-center mt-2">
+                                    Read article <i class="bi bi-arrow-right ms-2"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- IT Support Section -->
+        <div class="col-12 mb-2">
+            <div class="category-section">
+                <div class="category-header d-flex align-items-center bg-white p-4 rounded-top shadow-sm border-start border-5 border-success">
+                    <div class="category-icon bg-success-subtle me-4">
+                        <i class="bi bi-pc-display text-success"></i>
+                    </div>
+                    <div>
+                        <h2 class="h3 mb-0">IT Support</h2>
+                        <p class="text-muted mb-0 mt-1">WiFi, software access, and account services</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mt-4">
+                    <div class="col-md-4">
+                        <a href="{{ url_for('article', slug='wifi-setup') }}" class="text-decoration-none">
+                            <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="category-badge bg-success-subtle text-success px-3 py-1 rounded-pill me-2">IT Support</span>
+                                </div>
+                                <h3 class="h4 mb-3">Campus WiFi Setup Guide</h3>
+                                <p class="mb-3 text-muted">Step-by-step guide for connecting to the campus wireless network.</p>
+                                <div class="text-success d-inline-flex align-items-center mt-2">
+                                    Read article <i class="bi bi-arrow-right ms-2"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('article', slug='password-reset') }}" class="text-decoration-none">
+                            <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="category-badge bg-success-subtle text-success px-3 py-1 rounded-pill me-2">IT Support</span>
+                                </div>
+                                <h3 class="h4 mb-3">Account Password Reset Guide</h3>
+                                <p class="mb-3 text-muted">Instructions for resetting your account password.</p>
+                                <div class="text-success d-inline-flex align-items-center mt-2">
+                                    Read article <i class="bi bi-arrow-right ms-2"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('article', slug='software-access') }}" class="text-decoration-none">
+                            <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="category-badge bg-success-subtle text-success px-3 py-1 rounded-pill me-2">IT Support</span>
+                                </div>
+                                <h3 class="h4 mb-3">Accessing Campus Software</h3>
+                                <p class="mb-3 text-muted">How to access and install licensed software for students and staff.</p>
+                                <div class="text-success d-inline-flex align-items-center mt-2">
+                                    Read article <i class="bi bi-arrow-right ms-2"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Facilities & Events Section -->
+        <div class="col-12 mb-2">
+            <div class="category-section">
+                <div class="category-header d-flex align-items-center bg-white p-4 rounded-top shadow-sm border-start border-5 border-info">
+                    <div class="category-icon bg-info-subtle me-4">
+                        <i class="bi bi-building text-info"></i>
+                    </div>
+                    <div>
+                        <h2 class="h3 mb-0">Facilities & Events</h2>
+                        <p class="text-muted mb-0 mt-1">Room bookings, maintenance, and event support</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mt-4">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('article', slug='room-booking') }}" class="text-decoration-none">
+                            <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="category-badge bg-info-subtle text-info px-3 py-1 rounded-pill me-2">Facilities</span>
+                                </div>
+                                <h3 class="h4 mb-3">How to Book Campus Rooms</h3>
+                                <p class="mb-3 text-muted">Guide to reserving classrooms, meeting spaces, and event venues.</p>
+                                <div class="text-info d-inline-flex align-items-center mt-2">
+                                    Read article <i class="bi bi-arrow-right ms-2"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('article', slug='maintenance-request') }}" class="text-decoration-none">
+                            <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="category-badge bg-info-subtle text-info px-3 py-1 rounded-pill me-2">Facilities</span>
+                                </div>
+                                <h3 class="h4 mb-3">Submitting Maintenance Requests</h3>
+                                <p class="mb-3 text-muted">How to report facility issues and track maintenance requests.</p>
+                                <div class="text-info d-inline-flex align-items-center mt-2">
+                                    Read article <i class="bi bi-arrow-right ms-2"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Administrative Services Section -->
+        <div class="col-12">
+            <div class="category-section">
+                <div class="category-header d-flex align-items-center bg-white p-4 rounded-top shadow-sm border-start border-5 border-warning">
+                    <div class="category-icon bg-warning-subtle me-4">
+                        <i class="bi bi-folder text-warning"></i>
+                    </div>
+                    <div>
+                        <h2 class="h3 mb-0">Administrative Services</h2>
+                        <p class="text-muted mb-0 mt-1">ID cards, parking permits, and document requests</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mt-4">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('article', slug='id-card') }}" class="text-decoration-none">
+                            <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="category-badge bg-warning-subtle text-warning px-3 py-1 rounded-pill me-2">Administrative</span>
+                                </div>
+                                <h3 class="h4 mb-3">Student ID Card Services</h3>
+                                <p class="mb-3 text-muted">Information about obtaining, replacing, and using your student ID card.</p>
+                                <div class="text-warning d-inline-flex align-items-center mt-2">
+                                    Read article <i class="bi bi-arrow-right ms-2"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('article', slug='parking-permit') }}" class="text-decoration-none">
+                            <div class="article-card p-4 rounded shadow-sm bg-white h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="category-badge bg-warning-subtle text-warning px-3 py-1 rounded-pill me-2">Administrative</span>
+                                </div>
+                                <h3 class="h4 mb-3">Parking Permit Information</h3>
+                                <p class="mb-3 text-muted">Learn how to request and manage campus parking permits.</p>
+                                <div class="text-warning d-inline-flex align-items-center mt-2">
+                                    Read article <i class="bi bi-arrow-right ms-2"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Floating action button for View All Articles -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <a href="{{ url_for('all_articles') }}" class="btn btn-primary btn-lg rounded-circle shadow-lg floating-action-btn pulse-animation d-flex align-items-center justify-content-center" aria-label="View all articles">
+            <i class="bi bi-grid-3x3-gap-fill fs-3"></i>
+        </a>
+    </div>
+</div>
+
+<style>
+body {
+    background-color: #f8f9fa;
+}
+
+/* White header text styling */
+.kb-title {
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.kb-subtitle {
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.category-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+
+.article-card {
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.article-card:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(13,110,253,1) 0%, rgba(20,184,166,1) 33%, rgba(13,202,240,1) 66%, rgba(255,193,7,1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.article-card:hover:before {
+    opacity: 1;
+}
+
+.category-badge {
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.category-section {
+    margin-bottom: 30px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* All Articles Button Styling - Keep the styles for the floating button */
+.all-articles-btn {
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    border: none;
+    color: #fff !important; /* Ensure text is white */
+}
+
+.all-articles-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3) !important;
+    background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
+    color: #fff !important; /* Keep text white on hover */
+}
+
+/* Floating Action Button Styling */
+.floating-action-btn {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    border: none;
+    box-shadow: 0 4px 20px rgba(13, 110, 253, 0.5) !important;
+    transition: all 0.3s ease;
+    color: #fff !important; /* Ensure icon is white */
+}
+
+.floating-action-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.5) !important;
+    background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
+    color: #fff !important; /* Keep icon white on hover */
+}
+
+/* Pulse Animation */
+.pulse-animation {
+    position: relative;
+}
+
+.pulse-animation::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(13, 110, 253, 0.6);
+    z-index: -1;
+    animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    70% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+}
+
+/* Ensure all blue buttons have white text */
+.btn-primary {
+    color: #fff !important;
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+    color: #fff !important;
+}
+</style>
+{% endblock %} 

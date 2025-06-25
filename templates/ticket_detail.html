@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+{% block title %}Ticket #{{ ticket.id }}{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('list_tickets') }}">Tickets</a>
+</li>
+{% if ticket.service_type %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('services') }}#{{ ticket.service_type }}">{{ ticket.service_type|replace('_', ' ')|title }}</a>
+</li>
+{% endif %}
+<li class="breadcrumb-item active">Ticket #{{ ticket.id }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="ticket-container">
+  <!-- Ticket Header -->
+  <div class="ticket-header">
+    <div class="d-flex align-items-center gap-3">
+      <div class="ticket-number">#{{ ticket.id }}</div>
+      <h2>{{ ticket.title }}</h2>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+      {% if session.is_admin or (ticket.assigned_agent_id == session.user_id) %}
+        <select id="status-select" class="status-select">
+          {% for s in ['Open', 'In Progress', 'Closed'] %}
+            <option value="{{ s }}" {% if s==ticket.status %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+        {% if session.is_admin %}
+          <!-- Assignment form for admin -->
+          <form id="assign-form" action="{{ url_for('assign_ticket', ticket_id=ticket.id) }}" method="POST" class="d-inline-block ms-2">
+            <select name="assigned_agent_id" class="form-select form-select-sm d-inline-block w-auto">
+              <option value="">Unassigned</option>
+              {% for u in agents %}
+              <option value="{{ u.id }}" {% if ticket.assigned_agent_id == u.id %}selected{% endif %}>{{ u.username }} ({{ u.agent_category }})</option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-secondary btn-sm ms-1">Assign</button>
+          </form>
+        {% endif %}
+      {% else %}
+        <span class="status-badge {{ ticket.status|lower|replace(' ', '-') }}">
+          {{ ticket.status }}
+        </span>
+      {% endif %}
+      
+      {% if ticket.service_type %}
+      <a href="{{ url_for('services') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Back to Services
+      </a>
+      {% else %}
+      <a href="{{ url_for('list_tickets') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Back to List
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="ticket-content">
+    <!-- Essential Info -->
+    <div class="info-grid mb-4">
+      <div class="info-item">
+        <span class="info-label">Created</span>
+        <span class="info-value timestamp" data-timestamp="{{ ticket.created_at }}">{{ ticket.created_at }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Requester</span>
+        <span class="info-value">{{ ticket.username }}</span>
+      </div>
+      {% if ticket.email %}
+      <div class="info-item">
+        <span class="info-label">Email</span>
+        <span class="info-value">{{ ticket.email }}</span>
+      </div>
+      {% endif %}
+      {% if ticket.phone %}
+      <div class="info-item">
+        <span class="info-label">Phone</span>
+        <span class="info-value">{{ ticket.phone }}</span>
+      </div>
+      {% endif %}
+      {% if ticket.service_type %}
+      <div class="info-item">
+        <span class="info-label">Service Type</span>
+        <span class="info-value">{{ ticket.service_type|replace('_', ' ')|title }}</span>
+      </div>
+      {% endif %}
+      {% if ticket.building %}
+      <div class="info-item">
+        <span class="info-label">Building</span>
+        <span class="info-value">{{ ticket.building }}</span>
+      </div>
+      {% endif %}
+      {% if ticket.room %}
+      <div class="info-item">
+        <span class="info-label">Room</span>
+        <span class="info-value">{{ ticket.room }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Service-Specific Details -->
+    {% if ticket.service_type %}
+    <div class="service-details mb-4">
+      <h3 class="section-title">Service Details</h3>
+      <div class="info-grid">
+        {% if ticket.service_type == 'academic' %}
+          {% if ticket.document_type %}
+          <div class="info-item">
+            <span class="info-label">Document Type</span>
+            <span class="info-value">{{ ticket.document_type|title }}</span>
+          </div>
+          {% endif %}
+          {% if ticket.delivery_method %}
+          <div class="info-item">
+            <span class="info-label">Delivery Method</span>
+            <span class="info-value">{{ ticket.delivery_method|title }}</span>
+          </div>
+          {% endif %}
+        {% elif ticket.service_type == 'it_support' %}
+          {% if ticket.device_type %}
+          <div class="info-item">
+            <span class="info-label">Device Type</span>
+            <span class="info-value">{{ ticket.device_type|title }}</span>
+          </div>
+          {% endif %}
+          {% if ticket.operating_system %}
+          <div class="info-item">
+            <span class="info-label">Operating System</span>
+            <span class="info-value">{{ ticket.operating_system|title }}</span>
+          </div>
+          {% endif %}
+        {% elif ticket.service_type == 'facilities' %}
+          {% if ticket.location %}
+          <div class="info-item">
+            <span class="info-label">Location</span>
+            <span class="info-value">{{ ticket.location }}</span>
+          </div>
+          {% endif %}
+          {% if ticket.preferred_date %}
+          <div class="info-item">
+            <span class="info-label">Preferred Date</span>
+            <span class="info-value">{{ ticket.preferred_date }}</span>
+          </div>
+          {% endif %}
+        {% elif ticket.service_type == 'admin_services' %}
+          {% if ticket.id_type %}
+          <div class="info-item">
+            <span class="info-label">ID Type</span>
+            <span class="info-value">{{ ticket.id_type|title }}</span>
+          </div>
+          {% endif %}
+          {% if ticket.urgency %}
+          <div class="info-item">
+            <span class="info-label">Urgency</span>
+            <span class="info-value">{{ ticket.urgency|title }}</span>
+          </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Description -->
+    <div class="description-section mb-4">
+      <h3 class="section-title">Description</h3>
+      <div class="description">{{ ticket.description }}</div>
+    </div>
+
+    <!-- Comments -->
+    <div class="comments-section">
+      <h3 class="section-title">Comments</h3>
+      
+      <!-- Add comment form -->
+      <form class="comment-form" action="{{ url_for('add_comment', ticket_id=ticket.id) }}" method="POST">
+        <div class="formatting-toolbar">
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" title="Bold">
+              <i class="bi bi-type-bold"></i>
+            </button>
+            <button type="button" class="toolbar-btn" title="Italic">
+              <i class="bi bi-type-italic"></i>
+            </button>
+            <button type="button" class="toolbar-btn" title="Underline">
+              <i class="bi bi-type-underline"></i>
+            </button>
+            <button type="button" class="toolbar-btn" title="Strikethrough">
+              <i class="bi bi-type-strikethrough"></i>
+            </button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" title="Bullet List">
+              <i class="bi bi-list-ul"></i>
+            </button>
+            <button type="button" class="toolbar-btn" title="Numbered List">
+              <i class="bi bi-list-ol"></i>
+            </button>
+            <button type="button" class="toolbar-btn" title="Indent">
+              <i class="bi bi-text-indent-left"></i>
+            </button>
+            <button type="button" class="toolbar-btn" title="Outdent">
+              <i class="bi bi-text-indent-right"></i>
+            </button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" title="Code Block">
+              <i class="bi bi-code-square"></i>
+            </button>
+            <button type="button" class="toolbar-btn" title="Quote">
+              <i class="bi bi-quote"></i>
+            </button>
+            <button type="button" class="toolbar-btn" title="Insert Link">
+              <i class="bi bi-link-45deg"></i>
+            </button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <select class="font-select" title="Font Size">
+              <option value="13">Small</option>
+              <option value="15" selected>Normal</option>
+              <option value="18">Large</option>
+              <option value="24">Huge</option>
+            </select>
+          </div>
+        </div>
+        <div class="editor-container">
+          <div class="form-control rich-editor" name="content" contenteditable="true" role="textbox" aria-multiline="true" placeholder="Write your reply..." required></div>
+          <input type="hidden" name="content" id="editor-content">
+        </div>
+        <div class="form-actions">
+          <div class="text-muted">
+            <small>Press Ctrl+Enter to submit</small>
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="btn btn-outline-secondary me-2">
+              <i class="bi bi-paperclip me-2"></i>Attach Files
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-send me-2"></i>Send Reply
+            </button>
+          </div>
+        </div>
+      </form>
+      
+      <!-- Comments thread -->
+      {% if comments %}
+        <div class="comments-thread">
+          {% for comment in comments %}
+          <div class="comment">
+            <div class="comment-header">
+              <div class="comment-avatar">
+                {{ comment.username[0]|upper }}
+              </div>
+              <div class="comment-meta">
+                <div class="comment-author">
+                  {{ comment.username }}
+                  {% if comment.is_admin %}
+                  <span class="badge bg-primary">Admin</span>
+                  {% endif %}
+                </div>
+                <div class="comment-timestamp timestamp" data-timestamp="{{ comment.created_at }}">
+                  {{ comment.created_at }}
+                </div>
+              </div>
+            </div>
+            <div class="comment-body">
+              {{ comment.content }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="comments-empty">
+          <i class="bi bi-chat-dots"></i>
+          <p>No replies yet</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if session.is_admin or (ticket.assigned_agent_id == session.user_id) %}
+<script>
+  document.getElementById('status-select').addEventListener('change', function(e) {
+    fetch(`/tickets/{{ ticket.id }}/status`, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({status: e.target.value})
+    }).then(() => location.reload());
+  });
+</script>
+{% endif %}
+
+<!-- Timezone conversion script -->
+<script src="{{ url_for('static', filename='js/rich-editor.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Timezone conversion
+  document.querySelectorAll('.timestamp').forEach(function(element) {
+    const utcTimestamp = element.dataset.timestamp;
+    const localDate = new Date(utcTimestamp);
+    const options = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    };
+    element.textContent = localDate.toLocaleString(undefined, options);
+  });
+
+  // Form submission handling
+  document.querySelector('.comment-form').addEventListener('submit', function(e) {
+    const editor = this.querySelector('.rich-editor');
+    const hiddenInput = this.querySelector('#editor-content');
+    hiddenInput.value = editor.innerHTML;
+  });
+
+  // Ctrl+Enter submission
+  document.querySelector('.rich-editor').addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      this.closest('form').submit();
+    }
+  });
+
+  const assignForm = document.getElementById('assign-form');
+  if (assignForm) {
+    assignForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      fetch(this.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          alert('Error assigning ticket. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error assigning ticket. Please try again.');
+      });
+    });
+  }
+});
+</script>
+{% endblock %}

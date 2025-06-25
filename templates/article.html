@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('help_articles') }}">Knowledge Base</a>
+</li>
+<li class="breadcrumb-item active">{{ article.title }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <!-- Back Button and Category Badge in the same row -->
+      <div class="mb-4 d-flex justify-content-between align-items-center">
+        <a href="{{ url_for('help_articles') }}" class="btn btn-primary px-4 py-2">
+          <i class="bi bi-arrow-left-circle-fill me-2"></i>Back to Knowledge Base
+        </a>
+        
+        <span class="category-badge bg-{{ article.icon_bg.replace('bg-', '') }} text-{{ article.icon_color.replace('text-', '') }} px-3 py-2 rounded-pill d-inline-flex align-items-center shadow-sm">
+          <i class="bi bi-{{ article.icon }} me-2"></i>{{ article.category }}
+        </span>
+      </div>
+      
+      <!-- Article Header -->
+      <div class="article-header mb-4">
+        <h1 class="display-5 fw-bold mb-4">{{ article.title }}</h1>
+      </div>
+
+      <!-- Article Content -->
+      <div class="article-content bg-white p-5 rounded shadow-sm">
+        {{ article.content|safe }}
+        
+        <!-- Article Footer -->
+        <div class="article-footer mt-5 pt-4 border-top">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-file-earmark-text text-muted me-2"></i>
+                <span class="text-muted">Last updated: March 2024</span>
+              </div>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+              <div class="was-helpful">
+                <span class="me-3">Was this article helpful?</span>
+                <a href="#" class="btn btn-sm btn-outline-success me-2"><i class="bi bi-hand-thumbs-up"></i> Yes</a>
+                <a href="#" class="btn btn-sm btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i> No</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Articles -->
+      <div class="related-articles mt-5">
+        <h3 class="h5 mb-4">Related Articles</h3>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <a href="#" class="text-decoration-none">
+              <div class="article-card p-3 rounded shadow-sm bg-white">
+                <h4 class="h6 mb-2">Getting Started with Campus Services</h4>
+                <p class="mb-0 small text-muted">A quick overview of services available to students</p>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-6">
+            <a href="#" class="text-decoration-none">
+              <div class="article-card p-3 rounded shadow-sm bg-white">
+                <h4 class="h6 mb-2">Creating Support Tickets</h4>
+                <p class="mb-0 small text-muted">How to submit tickets for various campus services</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+body {
+  background-color: #f8f9fa;
+}
+
+.article-content {
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.article-content p {
+  margin-bottom: 1.5rem;
+}
+
+.article-content ul, 
+.article-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.2rem;
+}
+
+.article-content li {
+  margin-bottom: 0.5rem;
+}
+
+.article-content h3 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.article-card {
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1) !important;
+}
+
+.category-badge {
+  font-weight: 500;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Back button styling */
+.btn-primary {
+  font-weight: 600;
+  color: #fff !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 576px) {
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  .category-badge {
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+}
+</style>
+{% endblock %} 

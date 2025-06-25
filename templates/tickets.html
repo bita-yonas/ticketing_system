@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">
+            {% if view == 'assigned' %}
+                Assigned Tickets
+            {% elif view == 'all_departments' %}
+                All Departments
+            {% elif user_role == 'it_admin' %}
+                IT Department Tickets
+            {% elif user_role == 'facilities_admin' %}
+                Facilities & Events Tickets
+            {% elif user_role == 'academic_admin' %}
+                Academic Services Tickets
+            {% elif user_role == 'administrative_admin' %}
+                Administrative Services Tickets
+            {% else %}
+                Tickets
+            {% endif %}
+        </h1>
+        <div>
+            {% if user_role in ['agent', 'super_agent'] %}
+                <a href="{{ url_for('list_tickets', view='assigned') }}" class="btn btn-outline-primary me-2">
+                    <i class="bi bi-inbox"></i> View Assigned
+                </a>
+            {% endif %}
+            {% if user_role == 'super_agent' %}
+                <a href="{{ url_for('list_tickets', view='all_departments') }}" class="btn btn-outline-info me-2">
+                    <i class="bi bi-grid"></i> All Departments
+                </a>
+            {% endif %}
+            <a href="{{ url_for('new_ticket') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> New Ticket
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>User</th>
+                            {% if user_role in ['admin', 'it_admin', 'facilities_admin', 'academic_admin', 'administrative_admin', 'agent', 'super_agent'] %}
+                                <th>Assignment</th>
+                            {% endif %}
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ ticket.title }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if ticket.status == 'closed' else 'warning' if ticket.status == 'in_progress' else 'primary' }}">
+                                    {{ ticket.status|replace('_', ' ')|title }}
+                                </span>
+                            </td>
+                            <td>{{ ticket.created_at }}</td>
+                            <td>{{ ticket.username }}</td>
+                            {% if user_role in ['admin', 'it_admin', 'facilities_admin', 'academic_admin', 'administrative_admin', 'agent', 'super_agent'] %}
+                                <td>
+                                    {% if ticket.assigned_agent_id %}
+                                        <span class="badge bg-info">Assigned</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Unassigned</span>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            <td>
+                                <a href="{{ url_for('ticket_detail', ticket_id=ticket.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                                {% if user_role in ['admin', 'it_admin', 'facilities_admin', 'academic_admin', 'administrative_admin'] and not ticket.assigned_agent_id %}
+                                    <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#assignModal{{ ticket.id }}">
+                                        <i class="bi bi-person-plus"></i> Assign
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% if user_role in ['admin', 'it_admin', 'facilities_admin', 'academic_admin', 'administrative_admin'] %}
+                        <!-- Assignment Modal -->
+                        <div class="modal fade" id="assignModal{{ ticket.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Assign Ticket #{{ ticket.id }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{{ url_for('assign_ticket', ticket_id=ticket.id) }}" method="post">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="assigned_agent_id" class="form-label">Select Agent</label>
+                                                <select name="assigned_agent_id" id="assigned_agent_id" class="form-select" required>
+                                                    <option value="">Choose an agent...</option>
+                                                    {% for agent in agents %}
+                                                        <option value="{{ agent.id }}">{{ agent.username }} ({{ agent.agent_category }})</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-success">Assign Ticket</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
